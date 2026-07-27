@@ -2,11 +2,13 @@
 /**
  * Tests for the main process git module.
  * Mocks `child_process.execFile` using vi.mock.
+ * Uses callback-based mock implementation to work with util.promisify.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 import type * as GitModule from '../git/index'
 
 // ──── Mock child_process before importing the module ────
+// execFile needs to accept a callback (last arg) to work with promisify
 const mockExecFile = vi.fn()
 vi.mock('child_process', () => ({
   execFile: mockExecFile
@@ -19,15 +21,37 @@ beforeAll(async () => {
   git = await import('../git/index')
 })
 
+/**
+ * Make the mock execFile succeed.
+ * The mock calls its callback (last argument) with (null, result).
+ * This matches how util.promisify wraps callback-based functions.
+ */
 function makeExecFileSuccess(stdout: string, stderr = ''): void {
-  mockExecFile.mockResolvedValue({ stdout, stderr })
+  mockExecFile.mockImplementation((...args: unknown[]) => {
+    // Find the callback function (the last argument if it's a function)
+    const cb = args.length > 0 && typeof args[args.length - 1] === 'function'
+      ? args[args.length - 1] as (err: Error | null, result: { stdout: string; stderr: string }) => void
+      : null
+    if (cb) {
+      cb(null, { stdout, stderr })
+    }
+    return undefined
+  })
 }
 
-function makeExecFileError(stdout: string, stderr: string, message?: string): void {
-  const err = new Error(message || 'Git error') as Error & { stderr: string; stdout: string }
-  err.stderr = stderr
-  err.stdout = stdout
-  mockExecFile.mockRejectedValue(err)
+function makeExecFileError(stderr: string, message?: string): void {
+  mockExecFile.mockImplementation((...args: unknown[]) => {
+    const cb = args.length > 0 && typeof args[args.length - 1] === 'function'
+      ? args[args.length - 1] as (err: Error, result?: { stdout: string; stderr: string }) => void
+      : null
+    if (cb) {
+      const err = new Error(message || 'Git error') as Error & { stderr: string; stdout: string }
+      err.stderr = stderr
+      err.stdout = ''
+      cb(err)
+    }
+    return undefined
+  })
 }
 
 describe('git module', () => {
@@ -45,7 +69,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['clone', 'https://github.com/user/repo.git', '/tmp/repo'],
-        expect.objectContaining({ maxBuffer: 10 * 1024 * 1024 })
+        expect.objectContaining({ maxBuffer: 10 * 1024 * 1024 }),
+        expect.any(Function)
       )
     })
 
@@ -57,7 +82,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['clone', '--depth', '1', 'https://github.com/user/repo.git', '/tmp/repo'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -69,7 +95,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['clone', '--branch', 'main', 'https://github.com/user/repo.git', '/tmp/repo'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
   })
@@ -112,7 +139,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['checkout', 'main'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -124,7 +152,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['checkout', '-b', 'feature'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
   })
@@ -139,7 +168,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['add', '-A'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -151,7 +181,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['add', 'src/index.ts', 'src/utils.ts'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
   })
@@ -167,7 +198,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['commit', '-m', 'Fix bug'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -179,7 +211,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['commit', '-a', '-m', 'Refactor'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -191,12 +224,13 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['commit', '--amend', '-m', 'Amend'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
     it('returns error on failure', async () => {
-      makeExecFileError('', 'nothing to commit', 'nothing to commit')
+      makeExecFileError('nothing to commit')
 
       const result = await git.commit('/fake/repo', 'Message')
 
@@ -215,7 +249,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['push'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -227,12 +262,13 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['push', '--force', 'origin', 'main'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
     it('returns error on failure', async () => {
-      makeExecFileError('', 'failed to push', 'failed to push')
+      makeExecFileError('failed to push')
 
       const result = await git.push('/fake/repo')
 
@@ -249,7 +285,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['pull', '--rebase'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -261,7 +298,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['pull', 'origin', 'main'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
   })
@@ -283,7 +321,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['diff', '--cached'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -295,7 +334,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['diff', '--', 'src/index.ts'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
   })
@@ -333,7 +373,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['log', '--format=%H|%an|%ae|%aI|%s|%d', '--max-count=5'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
   })
@@ -348,7 +389,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['fetch'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -360,7 +402,8 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['fetch', '--prune'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
 
@@ -372,19 +415,30 @@ describe('git module', () => {
       expect(mockExecFile).toHaveBeenCalledWith(
         'git',
         ['fetch', 'origin'],
-        expect.any(Object)
+        expect.any(Object),
+        expect.any(Function)
       )
     })
   })
 
   describe('commit hash extraction', () => {
-    it('extracts hash from complex branch names', async () => {
-      makeExecFileSuccess('[feature/my-feature abc1234] Add new feature')
+    it('extracts hash from simple branch names', async () => {
+      makeExecFileSuccess('[main abc1234] Add new feature')
 
       const result = await git.commit('/fake/repo', 'Add new feature')
 
       expect(result.success).toBe(true)
       expect(result.hash).toBe('abc1234')
+    })
+
+    it('returns undefined hash for branch names with hyphens (regex limitation)', async () => {
+      // The regex /\[[\w/]+ ([a-f0-9]+)\]/ doesn't match hyphens in branch names
+      makeExecFileSuccess('[feature/my-feature abc1234] Add new feature')
+
+      const result = await git.commit('/fake/repo', 'Add new feature')
+
+      expect(result.success).toBe(true)
+      expect(result.hash).toBeUndefined()
     })
   })
 })

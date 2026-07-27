@@ -21,6 +21,23 @@ export type AnimationSpeed = 'normal' | 'reduced' | 'none'
 /** Notification severity level */
 export type NotificationType = 'success' | 'warning' | 'error' | 'info'
 
+/** Notification panel kind — richer type for the notification center */
+export type PanelNotificationKind = 'execution_complete' | 'pr_created' | 'error' | 'update_available' | 'info'
+
+/** Panel notification — richer notification type for the NotificationCenter dropdown */
+export interface PanelNotification {
+  id: string
+  kind: PanelNotificationKind
+  title: string
+  message?: string
+  timestamp: number
+  read: boolean
+  /** Optional action URL / route */
+  action?: string
+  /** Whether the notification is persistent */
+  persistent?: boolean
+}
+
 /** Task status */
 export type TaskStatus = 'queued' | 'running' | 'paused' | 'completed' | 'failed' | 'cancelled'
 

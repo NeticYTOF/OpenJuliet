@@ -1,13 +1,36 @@
-import { Minus, Square, X, Sparkles } from 'lucide-react'
+import { Minus, Square, X, Sparkles, Bell } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
 import { APP_NAME } from '../../lib/constants'
+import { NotificationCenter } from '../features/NotificationCenter'
+import ThemeToggle from '../features/ThemeToggle'
+import type { AppNotification } from '../features/NotificationCenter'
 
 /**
  * Custom frameless titlebar for the Electron window.
  * Provides a draggable region, app branding, current view name, and window controls.
  */
 export default function Titlebar(): JSX.Element {
-  const { activeView } = useAppStore()
+  const {
+    activeView,
+    panelNotifications,
+    markPanelNotificationRead,
+    markAllPanelNotificationsRead,
+    clearPanelNotification,
+    clearAllPanelNotifications,
+    addPanelNotification
+  } = useAppStore()
+
+  // Map panel notifications to the AppNotification type expected by NotificationCenter
+  const notificationItems: AppNotification[] = panelNotifications
+
+  // Map store actions to NotificationCenter's expected callbacks
+  const handleMarkAllRead = () => markAllPanelNotificationsRead()
+  const handleClearAll = () => clearAllPanelNotifications()
+  const handleAction = (notification: AppNotification) => {
+    if (notification.action) {
+      useAppStore.getState().setView(notification.action as never)
+    }
+  }
 
   // Map view IDs to display names
   const viewNames: Record<string, string> = {
@@ -43,8 +66,23 @@ export default function Titlebar(): JSX.Element {
         </span>
       </div>
 
-      {/* Right — Window Controls */}
-      <div className="flex items-center no-drag" style={{ ['WebkitAppRegion' as string]: 'no-drag' as unknown as string }}>
+      {/* Right — Notifications, Theme, Window Controls */}
+      <div className="flex items-center no-drag gap-1" style={{ ['WebkitAppRegion' as string]: 'no-drag' as unknown as string }}>
+        {/* Notification Center */}
+        <NotificationCenter
+          notifications={notificationItems}
+          onMarkRead={markPanelNotificationRead}
+          onMarkAllRead={handleMarkAllRead}
+          onClear={clearPanelNotification}
+          onClearAll={handleClearAll}
+          onNotificationAction={handleAction}
+        />
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
+
+        {/* Window Controls */}
+        <div className="flex items-center ml-1">
         <button
           onClick={handleMinimize}
           className="flex items-center justify-center w-10 h-7 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors rounded"
@@ -66,6 +104,7 @@ export default function Titlebar(): JSX.Element {
         >
           <X size={14} />
         </button>
+      </div>
       </div>
     </header>
   )

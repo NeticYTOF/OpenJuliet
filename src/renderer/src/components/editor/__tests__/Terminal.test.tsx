@@ -126,7 +126,10 @@ describe('Terminal', () => {
 
     const input = screen.getByPlaceholderText('Type a command...')
     fireEvent.change(input, { target: { value: 'ls -la' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
+
+    // Find and submit the form directly (Enter in input triggers form submit)
+    const form = input.closest('form') as HTMLFormElement
+    fireEvent.submit(form)
 
     expect(onCommand).toHaveBeenCalledWith('ls -la')
   })
@@ -137,7 +140,9 @@ describe('Terminal', () => {
 
     const input = screen.getByPlaceholderText('Type a command...')
     fireEvent.change(input, { target: { value: '   ' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
+
+    const form = input.closest('form') as HTMLFormElement
+    fireEvent.submit(form)
 
     expect(onCommand).not.toHaveBeenCalled()
   })
@@ -148,7 +153,9 @@ describe('Terminal', () => {
 
     const input = screen.getByPlaceholderText('Type a command...') as HTMLInputElement
     fireEvent.change(input, { target: { value: 'git status' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
+
+    const form = input.closest('form') as HTMLFormElement
+    fireEvent.submit(form)
 
     expect(input.value).toBe('')
   })
@@ -156,15 +163,16 @@ describe('Terminal', () => {
   it('navigates command history with ArrowUp and ArrowDown', () => {
     render(<Terminal output={[]} onCommand={vi.fn()} />)
     const input = screen.getByPlaceholderText('Type a command...') as HTMLInputElement
+    const form = input.closest('form') as HTMLFormElement
 
     // Submit two commands
     fireEvent.change(input, { target: { value: 'first' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
+    fireEvent.submit(form)
 
     fireEvent.change(input, { target: { value: 'second' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
+    fireEvent.submit(form)
 
-    // ArrowUp should show the previous command
+    // ArrowUp should show the most recent command
     fireEvent.keyDown(input, { key: 'ArrowUp' })
     expect(input.value).toBe('second')
 
@@ -195,7 +203,7 @@ describe('Terminal', () => {
   it('toggles expanded state when expand button is clicked', () => {
     render(<Terminal output={[]} />)
     const expandBtn = screen.getByTitle('Expand')
-    expandBtn.click()
+    fireEvent.click(expandBtn)
 
     // After click, should show collapse button
     expect(screen.getByTitle('Collapse')).toBeInTheDocument()

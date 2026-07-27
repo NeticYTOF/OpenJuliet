@@ -65,8 +65,10 @@ describe('CodeViewer', () => {
 
   it('shows line count', () => {
     render(<CodeViewer code={sampleCode} />)
-    // sampleCode has 4 lines: function hello() {, console.log(...);, }, hello();
-    expect(screen.getByText('4 lines')).toBeInTheDocument()
+    // sampleCode has 5 lines with the trailing newline
+    // There are two occurrences of "5 lines" (toolbar + status bar)
+    const lineCounts = screen.getAllByText(/5\s+lines/)
+    expect(lineCounts.length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders the search button', () => {

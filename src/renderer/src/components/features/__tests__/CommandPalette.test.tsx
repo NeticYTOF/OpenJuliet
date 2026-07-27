@@ -42,6 +42,8 @@ describe('CommandPalette', () => {
   beforeEach(() => {
     setupBrowserMocks()
     localStorage.clear()
+    // Mock scrollIntoView for jsdom
+    Element.prototype.scrollIntoView = vi.fn()
     useAppStore.setState({
       activeView: 'dashboard',
       sidebarOpen: true,

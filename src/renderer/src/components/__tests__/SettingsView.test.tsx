@@ -13,6 +13,10 @@ vi.mock('framer-motion', () => ({
     span: ({ children, ...props }: Record<string, unknown>) => {
       const { initial, animate, exit, transition, variants, ...safeProps } = props
       return <span {...safeProps}>{children}</span>
+    },
+    button: ({ children, ...props }: Record<string, unknown>) => {
+      const { whileHover, whileTap, initial, animate, exit, transition, variants, layout, layoutId, ...safeProps } = props
+      return <button {...safeProps}>{children}</button>
     }
   },
   AnimatePresence: ({ children }: { children?: React.ReactNode }) => <>{children}</>
@@ -36,7 +40,8 @@ vi.mock('lucide-react', () => {
     Mail: MockIcon,
     FolderOpen: MockIcon,
     Clock: MockIcon,
-    Shield: MockIcon
+    Shield: MockIcon,
+    Loader2: MockIcon
   }
 })
 

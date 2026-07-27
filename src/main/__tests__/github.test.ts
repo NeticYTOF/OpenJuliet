@@ -40,6 +40,7 @@ const mockOctokitInstance = {
   }
 }
 
+// Use a class constructor mock so `new Octokit()` works
 vi.mock('octokit', () => ({
   Octokit: vi.fn().mockImplementation(() => mockOctokitInstance)
 }))
@@ -47,9 +48,13 @@ vi.mock('octokit', () => ({
 // ──── Module reference (lazy-loaded) ────
 type GitHubModule = typeof import('../github/index')
 let github: GitHubModule
+let OctokitMock: ReturnType<typeof vi.fn>
 
 beforeAll(async () => {
   github = await import('../github/index')
+  // Get a reference to the mocked Octokit constructor after the module is loaded
+  const mod = await import('octokit')
+  OctokitMock = mod.Octokit as unknown as ReturnType<typeof vi.fn>
 })
 
 describe('github module', () => {
@@ -61,10 +66,9 @@ describe('github module', () => {
 
   describe('authenticate', () => {
     it('creates an Octokit instance with a token', () => {
-      const { Octokit } = require('octokit')
       github.authenticate('ghp_test_token', 'pat', 'testuser')
 
-      expect(Octokit).toHaveBeenCalledWith({ auth: 'ghp_test_token' })
+      expect(OctokitMock).toHaveBeenCalledWith({ auth: 'ghp_test_token' })
     })
 
     it('stores auth state', () => {

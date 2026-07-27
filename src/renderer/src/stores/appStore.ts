@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ActiveView, Notification, NotificationType, ThemeMode } from '../types'
+import type { ActiveView, Notification, NotificationType, ThemeMode, PanelNotification, PanelNotificationKind } from '../types'
 import { generateId } from '../lib/utils'
 
 /**
@@ -18,6 +18,8 @@ interface AppState {
   commandPaletteOpen: boolean
   commandPaletteRecent: string[]
   keyboardShortcutsOpen: boolean
+  panelNotifications: PanelNotification[]
+  quickStartOpen: boolean
 
   /* ──── Actions ──── */
   toggleSidebar: () => void
@@ -35,6 +37,15 @@ interface AppState {
   addToCommandPaletteRecent: (id: string) => void
   setKeyboardShortcutsOpen: (open: boolean) => void
   toggleKeyboardShortcuts: () => void
+  /* ──── Panel Notification Actions ──── */
+  addPanelNotification: (kind: PanelNotificationKind, title: string, message?: string, action?: string, persistent?: boolean) => string
+  markPanelNotificationRead: (id: string) => void
+  markAllPanelNotificationsRead: () => void
+  clearPanelNotification: (id: string) => void
+  clearAllPanelNotifications: () => void
+  /* ──── Quick Start Guide ──── */
+  setQuickStartOpen: (open: boolean) => void
+  toggleQuickStart: () => void
 }
 
 function loadRecent(): string[] {
@@ -63,6 +74,8 @@ export const useAppStore = create<AppState>((set) => ({
   commandPaletteOpen: false,
   commandPaletteRecent: loadRecent(),
   keyboardShortcutsOpen: false,
+  panelNotifications: [],
+  quickStartOpen: false,
 
   /* ──── Actions ──── */
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
@@ -123,5 +136,51 @@ export const useAppStore = create<AppState>((set) => ({
   setKeyboardShortcutsOpen: (open) => set({ keyboardShortcutsOpen: open }),
 
   toggleKeyboardShortcuts: () =>
-    set((state) => ({ keyboardShortcutsOpen: !state.keyboardShortcutsOpen }))
+    set((state) => ({ keyboardShortcutsOpen: !state.keyboardShortcutsOpen })),
+
+  /* ──── Panel Notification Actions ──── */
+
+  addPanelNotification: (kind, title, message, action, persistent = false) => {
+    const id = generateId()
+    const notification: PanelNotification = {
+      id,
+      kind,
+      title,
+      message,
+      timestamp: Date.now(),
+      read: false,
+      action,
+      persistent
+    }
+    set((state) => ({
+      panelNotifications: [notification, ...state.panelNotifications]
+    }))
+    return id
+  },
+
+  markPanelNotificationRead: (id) =>
+    set((state) => ({
+      panelNotifications: state.panelNotifications.map((n) =>
+        n.id === id ? { ...n, read: true } : n
+      )
+    })),
+
+  markAllPanelNotificationsRead: () =>
+    set((state) => ({
+      panelNotifications: state.panelNotifications.map((n) => ({ ...n, read: true }))
+    })),
+
+  clearPanelNotification: (id) =>
+    set((state) => ({
+      panelNotifications: state.panelNotifications.filter((n) => n.id !== id)
+    })),
+
+  clearAllPanelNotifications: () => set({ panelNotifications: [] }),
+
+  /* ──── Quick Start Guide ──── */
+
+  setQuickStartOpen: (open) => set({ quickStartOpen: open }),
+
+  toggleQuickStart: () =>
+    set((state) => ({ quickStartOpen: !state.quickStartOpen }))
 }))
