@@ -5,7 +5,7 @@ import GitHubPanel from '../features/GitHubPanel'
 import TaskManager from '../features/TaskManager'
 import ExecutionPanel from '../features/ExecutionPanel'
 import SettingsView from '../features/SettingsView'
-
+import EditorView from '../features/EditorView'
 /**
  * View component map — routes ActiveView IDs to their components.
  */
@@ -15,7 +15,8 @@ const viewComponents: Record<string, React.ComponentType> = {
   issues: GitHubPanel,
   tasks: TaskManager,
   history: ExecutionPanel,
-  settings: SettingsView
+  settings: SettingsView,
+  editor: EditorView
 }
 
 /**

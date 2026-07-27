@@ -1,0 +1,98 @@
+# 📁 .github/workflows/release.yml
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release ${{ github.ref_name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            build-command: npx electron-builder --linux --config electron-builder.yml
+            artifact-name: OpenJuliet-linux
+          - os: macos-latest
+            build-command: npx electron-builder --mac --config electron-builder.yml
+            artifact-name: OpenJuliet-macos
+          - os: windows-latest
+            build-command: npx electron-builder --win --config electron-builder.yml
+            artifact-name: OpenJuliet-windows
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Package distribution
+        run: ${{ matrix.build-command }}
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: release/*
+          retention-days: 7
+          if-no-files-found: warn
+
+  create-release:
+    name: Create GitHub Release
+    needs: [release]
+    runs-on: ubuntu-latest
+    if: always() && !cancelled()
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Generate release notes
+        id: release-notes
+        run: |
+          echo "## What's Changed" > release-notes.md
+          echo "" >> release-notes.md
+          git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null >> release-notes.md || true
+          echo "" >> release-notes.md
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/commits/${{ github.ref_name }}" >> release-notes.md
+          echo "release_notes_file=release-notes.md" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: OpenJuliet ${{ github.ref_name }}
+          body_path: ${{ steps.release-notes.outputs.release_notes_file }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
+          files: |
+            artifacts/OpenJuliet-linux/*
+            artifacts/OpenJuliet-macos/*
+            artifacts/OpenJuliet-windows/*
+          fail_on_unmatched_files: false

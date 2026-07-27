@@ -10,6 +10,7 @@ export type ActiveView =
   | 'tasks'
   | 'history'
   | 'settings'
+  | 'editor'
 
 /** Theme mode */
 export type ThemeMode = 'dark' | 'light'
@@ -204,6 +205,20 @@ export interface ElectronAPI {
 declare global {
   interface Window {
     api: ElectronAPI
+  }
+
+  /* React 19 removed the global JSX namespace — declare it here to avoid TS2503 */
+  namespace JSX {
+    type Element = React.ReactElement
+    interface ElementClass extends React.Component<any> {
+      render(): React.ReactNode
+    }
+    interface ElementAttributesProperty {
+      props: Record<string, unknown>
+    }
+    interface IntrinsicElements {
+      [elemName: string]: unknown
+    }
   }
 }
 

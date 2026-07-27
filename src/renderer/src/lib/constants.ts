@@ -99,6 +99,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'issues', label: 'Issues', icon: 'Bug', shortcut: '⌘3' },
   { id: 'tasks', label: 'Tasks', icon: 'ListChecks', shortcut: '⌘4' },
   { id: 'history', label: 'History', icon: 'History', shortcut: '⌘5' },
+  { id: 'editor', label: 'Editor', icon: 'Code', shortcut: '⌘6' },
   { id: 'settings', label: 'Settings', icon: 'Settings', shortcut: '⌘,' }
 ]
 
