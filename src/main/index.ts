@@ -29,6 +29,7 @@ import * as github from './github/index'
 import * as providers from './providers/index'
 import * as execution from './execution/index'
 import * as sandbox from './sandbox/index'
+import * as demo from './demo/demo-runner'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -313,6 +314,7 @@ app.whenReady().then(async () => {
   // Wire up subsystem IPC event emitters
   providers.setMainWindow(mainWindow)
   execution.setMainWindow(mainWindow)
+  demo.setMainWindow(mainWindow)
 
   // Initialise auto-updater (no-op if electron-updater not installed)
   initAutoUpdater()
@@ -338,6 +340,7 @@ app.on('activate', async () => {
     registerHandlers(mainWindow)
     providers.setMainWindow(mainWindow)
     execution.setMainWindow(mainWindow)
+    demo.setMainWindow(mainWindow)
   }
 })
 

@@ -21,10 +21,12 @@
 import { ipcMain, shell, app, type BrowserWindow, type WebContents } from 'electron'
 import { spawn, type ChildProcess } from 'child_process'
 import { randomUUID } from 'crypto'
+import path from 'path'
 import * as github from '../github/index'
 import * as providers from '../providers/index'
 import * as database from '../database/index'
 import * as execution from '../execution/index'
+import * as demo from '../demo/demo-runner'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -62,6 +64,7 @@ export function registerHandlers(mainWindow: BrowserWindow): void {
   registerShellHandlers(webContents)
   registerAppHandlers()
   registerWorkspaceHandlers()
+  registerDemoHandlers()
 }
 
 // ---------------------------------------------------------------------------
@@ -762,4 +765,52 @@ function registerWorkspaceHandlers(): void {
       return { success: false, error: String(err) }
     }
   })
+}
+
+// ---------------------------------------------------------------------------
+// Demo handlers
+// ---------------------------------------------------------------------------
+
+function registerDemoHandlers(): void {
+  /**
+   * demo:start — Run the full autonomous workflow demo.
+   *
+   * Creates a temporary project directory with a sample codebase
+   * containing an intentional bug, then simulates all 7 stages:
+   * analyze → plan → implement → test → review → commit → PR.
+   *
+   * Sends real execution:progress / execution:log / execution:complete
+   * events so the renderer's ExecutionPanel can display live progress.
+   */
+  ipcMain.handle(
+    'demo:start',
+    async (_event, taskId: string) => {
+      try {
+        // Create a unique temp directory for the demo project
+        const demoId = randomUUID().slice(0, 8)
+        const demoDir = path.join(app.getPath('userData'), 'demo-projects', `demo-${demoId}`)
+
+        // Run the demo, passing the webContents so it can emit IPC events
+        const result = await demo.runFullDemo(demoDir, taskId)
+
+        return {
+          success: result.success,
+          data: {
+            projectDir: result.projectDir,
+            stages: result.stages.map((s) => ({
+              stage: s.stage,
+              status: s.status,
+              duration: s.duration
+            })),
+            filesCreated: result.filesCreated,
+            filesModified: result.filesModified,
+            duration: result.duration,
+            summary: result.summary
+          }
+        }
+      } catch (err) {
+        return { success: false, error: String(err) }
+      }
+    }
+  )
 }

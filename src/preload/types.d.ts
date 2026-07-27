@@ -320,6 +320,23 @@ export interface EventsAPI {
   on(channel: string, callback: (data: unknown) => void): () => void
 }
 
+export interface DemoAPI {
+  start(
+    taskId: string
+  ): Promise<{
+    success: boolean
+    data?: {
+      projectDir: string
+      stages: { stage: string; status: string; duration: number }[]
+      filesCreated: string[]
+      filesModified: string[]
+      duration: number
+      summary: string
+    }
+    error?: string
+  }>
+}
+
 export interface ElectronAPI {
   github: GithubAPI
   git: GitAPI
@@ -330,6 +347,7 @@ export interface ElectronAPI {
   shell: ShellAPI
   settings: SettingsAPI
   db: DbAPI
+  demo: DemoAPI
   events: EventsAPI
   update: UpdateAPI
 }

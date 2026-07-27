@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
 import { StatusDot } from '../ui/StatusDot'
+import { UpdateChecker } from '../features/UpdateChecker'
 
 /**
  * StatusBar — Bottom bar showing app status, git branch, and system info.
@@ -33,7 +34,7 @@ export default function StatusBar(): JSX.Element {
           <StatusDot status={github.isConnected ? 'connected' : 'disconnected'} size={6} />
           {github.isConnected ? 'GitHub' : 'Offline'}
         </span>
-        <span>v1.0.4</span>
+        <UpdateChecker compact />
       </div>
     </motion.footer>
   )

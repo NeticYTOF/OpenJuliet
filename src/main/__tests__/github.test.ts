@@ -40,13 +40,14 @@ const mockOctokitInstance = {
   }
 }
 
-// Use a class constructor mock so `new Octokit()` works
+// Use a class constructor mock so `new Octokit()` works properly.
+// Must use a regular function (not arrow) to be usable as a constructor.
 vi.mock('octokit', () => ({
-  Octokit: vi.fn().mockImplementation(() => mockOctokitInstance)
+  Octokit: vi.fn().mockImplementation(function () { return mockOctokitInstance })
 }))
 
 // ──── Module reference (lazy-loaded) ────
-type GitHubModule = typeof import('../github/index')
+type GitHubModule = typeof import('../github/index.js')
 let github: GitHubModule
 let OctokitMock: ReturnType<typeof vi.fn>
 
@@ -317,7 +318,7 @@ describe('github module', () => {
           base: { ref: 'main' },
           head: { ref: 'feature' },
           mergeable: true,
-          draft: false,
+          draft: true,
           created_at: '2024-05-01T00:00:00Z',
           updated_at: '2024-05-01T00:00:00Z',
           html_url: 'https://github.com/user/repo/pull/10',

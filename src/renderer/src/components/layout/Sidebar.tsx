@@ -9,13 +9,15 @@ import {
   Github,
   ChevronLeft,
   ChevronRight,
-  Code
+  Code,
+  HelpCircle
 } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
 import { cn } from '../../lib/utils'
 import { NAV_ITEMS } from '../../lib/constants'
 import type { ActiveView } from '../../types'
+import QuickStartGuide from '../features/QuickStartGuide'
 
 /**
  * Navigation icon resolver.
@@ -40,7 +42,7 @@ function getNavIcon(id: string): React.ComponentType<{ className?: string; size?
  * and a bottom section for GitHub connection status.
  */
 export default function Sidebar(): JSX.Element {
-  const { activeView, setView, sidebarOpen, toggleSidebar } = useAppStore()
+  const { activeView, setView, sidebarOpen, toggleSidebar, quickStartOpen, setQuickStartOpen, toggleQuickStart } = useAppStore()
   const { github } = useSettingsStore()
 
   return (
@@ -118,8 +120,26 @@ export default function Sidebar(): JSX.Element {
         })}
       </nav>
 
-      {/* Bottom Section — GitHub Status */}
-      <div className="px-3 py-3 border-t border-[var(--color-border)]">
+      {/* Bottom Section — GitHub Status + Quick Start */}
+      <div className="px-3 py-3 border-t border-[var(--color-border)] space-y-1">
+        {/* Help / Quick Start Button */}
+        <motion.button
+          whileHover={{ x: 2 }}
+          whileTap={{ scale: 0.98 }}
+          className={cn(
+            'flex items-center w-full gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors',
+            'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)]'
+          )}
+          onClick={toggleQuickStart}
+          title={sidebarOpen ? undefined : 'Quick Start Guide'}
+        >
+          <HelpCircle size={18} className="shrink-0" />
+          {sidebarOpen && (
+            <span className="text-xs font-medium truncate">Quick Start</span>
+          )}
+        </motion.button>
+
+        {/* GitHub Status */}
         <motion.div
           whileHover={{ x: 2 }}
           className={cn(
@@ -150,6 +170,12 @@ export default function Sidebar(): JSX.Element {
           )}
         </motion.div>
       </div>
+
+      {/* QuickStartGuide Slide-Out Panel */}
+      <QuickStartGuide
+        open={quickStartOpen}
+        onClose={() => setQuickStartOpen(false)}
+      />
     </motion.aside>
   )
 }

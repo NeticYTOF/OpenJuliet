@@ -3,7 +3,7 @@ import { useAppStore } from '../../stores/appStore'
 import Dashboard from '../features/Dashboard'
 import GitHubPanel from '../features/GitHubPanel'
 import TaskManager from '../features/TaskManager'
-import ExecutionPanel from '../features/ExecutionPanel'
+import HistoryView from '../features/HistoryView'
 import SettingsView from '../features/SettingsView'
 import EditorView from '../features/EditorView'
 
@@ -15,7 +15,7 @@ const viewComponents: Record<string, React.ComponentType> = {
   repositories: GitHubPanel,
   issues: GitHubPanel,
   tasks: TaskManager,
-  history: ExecutionPanel,
+  history: HistoryView,
   settings: SettingsView,
   editor: EditorView
 }

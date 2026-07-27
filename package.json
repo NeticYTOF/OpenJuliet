@@ -1,6 +1,6 @@
 {
   "name": "openjuliet",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "OpenJuliet — A beautiful, open-source, local-first autonomous coding agent",
   "engines": {
     "electron": ">=28",

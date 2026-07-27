@@ -8,6 +8,7 @@
 export type {
   AppAPI,
   DbAPI,
+  DemoAPI,
   ElectronAPI,
   EventsAPI,
   ExecutionAPI,

@@ -5,7 +5,7 @@
  * Uses callback-based mock implementation to work with util.promisify.
  */
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
-import type * as GitModule from '../git/index'
+import type * as GitModule from '../git/index.js'
 
 // ──── Mock child_process before importing the module ────
 // execFile needs to accept a callback (last arg) to work with promisify

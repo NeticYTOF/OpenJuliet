@@ -239,6 +239,24 @@ contextBridge.exposeInMainWorld('api', {
     }
   },
 
+  // ── Demo ────────────────────────────────────────────────────────────
+  demo: {
+    start(taskId: string): Promise<{
+      success: boolean
+      data?: {
+        projectDir: string
+        stages: { stage: string; status: string; duration: number }[]
+        filesCreated: string[]
+        filesModified: string[]
+        duration: number
+        summary: string
+      }
+      error?: string
+    }> {
+      return ipcRenderer.invoke('demo:start', taskId)
+    }
+  },
+
   // ── Events ─────────────────────────────────────────────────────────────
   events: {
     on(channel: string, callback: (data: unknown) => void): () => void {

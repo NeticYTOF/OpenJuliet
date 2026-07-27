@@ -37,6 +37,11 @@ interface ExecutionState {
   clearHistory: () => void
   reset: () => void
 
+  /** Create a synthetic active task for the demo workflow.
+   *  Sets up the store state so that IPC progress/log/complete events
+   *  from the demo runner are handled correctly. */
+  startDemo: (taskId: string, title: string, description: string) => void
+
   /* ──── IPC-powered actions ──── */
   /** Initialize IPC listeners (call once on app mount) */
   initIPCListeners: () => () => void
@@ -207,6 +212,34 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
   clearHistory: () => set({ history: [] }),
 
   reset: () => set(initialState),
+
+  /**
+   * startDemo — Sets up a synthetic active task for the demo workflow.
+   *
+   * Creates a fake Task entry in activeTask so that the IPC event handlers
+   * (handleProgressEvent, handleCompleteEvent) can match on taskId and
+   * update the store state correctly.  The task is never persisted.
+   */
+  startDemo: (taskId, title, description) => {
+    const now = Date.now()
+    set({
+      activeTask: {
+        id: taskId,
+        title,
+        description,
+        status: 'running',
+        priority: 'medium',
+        createdAt: now,
+        updatedAt: now,
+        files: [],
+        tokenCount: 0,
+        elapsedMs: 0
+      } as Task,
+      isRunning: true,
+      progress: null,
+      logs: []
+    })
+  },
 
   /* ──── IPC-powered Actions ──── */
 

@@ -15,7 +15,8 @@ import {
   Mail,
   FolderOpen,
   Clock,
-  Shield
+  Shield,
+  BookOpen
 } from 'lucide-react'
 import { useSettingsStore } from '../../stores/settingsStore'
 import { useAppStore } from '../../stores/appStore'
@@ -421,6 +422,8 @@ function AppearanceSettings(): JSX.Element {
 // ─── About ───
 
 function AboutSettings(): JSX.Element {
+  const { toggleQuickStart } = useAppStore()
+
   return (
     <div className="space-y-4">
       <AnimatedItem>
@@ -437,6 +440,9 @@ function AboutSettings(): JSX.Element {
             Built with Electron, React, and TypeScript.
           </p>
           <div className="mt-4 flex justify-center gap-2">
+            <Button variant="secondary" size="sm" icon={<BookOpen size={14} />} onClick={toggleQuickStart}>
+              Quick Start Guide
+            </Button>
             <Button variant="secondary" size="sm" icon={<RefreshCw size={14} />}>Check for Updates</Button>
           </div>
         </Card>
