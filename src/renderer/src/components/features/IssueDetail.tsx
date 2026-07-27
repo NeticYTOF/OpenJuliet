@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Bug,
@@ -8,27 +8,21 @@ import {
   User,
   GitPullRequest,
   GitBranch,
+  GitMerge,
   Calendar,
   ArrowLeft,
-  ExternalLink,
   CheckCircle,
   Circle,
   Lock,
   Unlock,
-  Link,
   Loader2,
   ChevronDown,
   ChevronUp,
-  AlertCircle,
-  MoreHorizontal,
 } from 'lucide-react'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
-import { Badge } from '../ui/Badge'
-import { ScrollArea } from '../ui/ScrollArea'
 import { AnimatedContainer, AnimatedItem } from '../ui/AnimatedContainer'
 import { cn, formatRelativeTime } from '../../lib/utils'
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -363,7 +357,6 @@ export function IssueDetail({
   className,
 }: IssueDetailProps): JSX.Element {
   const [showMetadata, setShowMetadata] = useState(true)
-  const [isCommenting, setIsCommenting] = useState(false)
 
   const handleAddComment = useCallback(
     async (body: string) => {
@@ -541,11 +534,8 @@ export function IssueDetail({
             </button>
 
             <AnimatePresence>
-              {(showMetadata || true) && (
+              {showMetadata && (
                 <motion.div
-                  initial={false}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
                   className="space-y-4 overflow-hidden lg:block"
                 >
                   {/* Action Buttons */}

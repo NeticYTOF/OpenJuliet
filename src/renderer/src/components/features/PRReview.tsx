@@ -251,13 +251,13 @@ function SummaryStat({
 
 function FileDiffView({
   file,
-  index,
+  _index,
   isExpanded,
   onToggle,
   decision,
 }: {
   file: DiffFile
-  index: number
+  _index: number
   isExpanded: boolean
   onToggle: () => void
   decision?: ReviewState
@@ -419,14 +419,14 @@ function ReviewActionBar({
   reviewState,
   onSetReviewState,
   onCancelReview,
-  onPendingComment,
-  hasPendingComment,
+  _onPendingComment,
+  _hasPendingComment,
 }: {
   reviewState: ReviewState | null
   onSetReviewState: (s: ReviewState) => void
   onCancelReview: () => void
-  onPendingComment: boolean
-  hasPendingComment: boolean
+  _onPendingComment: boolean
+  _hasPendingComment: boolean
 }): JSX.Element {
   const options: { value: ReviewState; label: string; icon: React.ReactNode; color: string }[] = [
     {
@@ -742,7 +742,7 @@ export function PRReview({
   isAuthor = false,
   onSubmitReview,
   onMerge,
-  onAddComment,
+  _onAddComment,
   onResolveComment,
   onRequestReviewers,
   onRefreshCI,
@@ -752,7 +752,7 @@ export function PRReview({
   const [expandedFiles, setExpandedFiles] = useState<Record<number, boolean>>({})
   const [reviewState, setReviewState] = useState<ReviewState | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [fileDecisions, setFileDecisions] = useState<Record<number, ReviewState>>({})
+  const fileDecisions: Record<number, ReviewState> = {}
 
   // ──── Toggle file expansion ────
   const toggleFile = useCallback((index: number) => {

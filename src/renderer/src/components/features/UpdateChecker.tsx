@@ -116,12 +116,12 @@ export function UpdateChecker({
     // Register IPC event listeners
     const unsubscribes: (() => void)[] = []
 
-    if (winApi?.events?.on) {
-      const { on } = winApi.events
+    if (winApi?.events) {
+      const events = winApi.events
 
       // Update available
       unsubscribes.push(
-        on('update:available', (data) => {
+        events.on('update:available', (data) => {
           if (!mounted) return
           const info = data as UpdateInfo
           setState((s) => ({
@@ -136,7 +136,7 @@ export function UpdateChecker({
 
       // Update not available
       unsubscribes.push(
-        on('update:not-available', () => {
+        events.on('update:not-available', () => {
           if (!mounted) return
           setState((s) => ({
             ...s,
@@ -149,7 +149,7 @@ export function UpdateChecker({
 
       // Download progress
       unsubscribes.push(
-        on('update:download-progress', (data) => {
+        events.on('update:download-progress', (data) => {
           if (!mounted) return
           const progress = data as DownloadProgress
           setState((s) => ({
@@ -162,7 +162,7 @@ export function UpdateChecker({
 
       // Update downloaded
       unsubscribes.push(
-        on('update:downloaded', (data) => {
+        events.on('update:downloaded', (data) => {
           if (!mounted) return
           const info = data as UpdateInfo
           setState((s) => ({
@@ -179,7 +179,7 @@ export function UpdateChecker({
 
       // Update error
       unsubscribes.push(
-        on('update:error', (data) => {
+        events.on('update:error', (data) => {
           if (!mounted) return
           const { error } = data as { error: string }
           setState((s) => ({

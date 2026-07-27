@@ -11,11 +11,12 @@ import {
   LogIn,
   RefreshCw,
   Star,
-  ExternalLink,
   Shield
 } from 'lucide-react'
 import { useSettingsStore } from '../../stores/settingsStore'
 import { useGitHubStore } from '../../stores/githubStore'
+import { useAppStore } from '../../stores/appStore'
+import { formatRelativeTime } from '../../lib/utils'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
@@ -24,6 +25,7 @@ import { EmptyState } from '../ui/EmptyState'
 import { Skeleton, CardSkeleton } from '../ui/Skeleton'
 import { AnimatedContainer, AnimatedItem } from '../ui/AnimatedContainer'
 import { cn } from '../../lib/utils'
+import type { Repository, Issue, PullRequest } from '../../types'
 
 /**
  * GitHubPanel — GitHub integration panel with login, repository browser, issue browser, and PR browser.
@@ -321,10 +323,5 @@ function GitHubPRs({ prs, loading, error }: {
     </div>
   )
 }
-
-// Import needed for types
-import type { Repository, Issue, PullRequest } from '../../types'
-import { useAppStore } from '../../stores/appStore'
-import { formatRelativeTime } from '../../lib/utils'
 
 export { GitHubLogin, GitHubRepos, GitHubIssues, GitHubPRs }

@@ -11,7 +11,6 @@ import {
   Plus,
   Trash2,
   RefreshCw,
-  Globe,
   User,
   Mail,
   FolderOpen,

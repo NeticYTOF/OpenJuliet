@@ -8,8 +8,6 @@ import {
   Square,
   Trash2,
   GripVertical,
-  ArrowUpDown,
-  MoreHorizontal,
   Clock,
   Zap,
   AlertCircle

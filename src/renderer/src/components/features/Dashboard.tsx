@@ -44,7 +44,7 @@ interface ActivityItem {
  * Dashboard — Welcome dashboard with quick stats, activity feed, quick actions, and system status.
  */
 export default function Dashboard(): JSX.Element {
-  const { setView, activeView } = useAppStore()
+  const { setView } = useAppStore()
   const { github, providers, workspaceDir } = useSettingsStore()
 
   const statCards: StatCard[] = [

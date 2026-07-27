@@ -9,16 +9,12 @@ import {
   AlertCircle,
   Info,
   GitPullRequest,
-  Sparkles,
   Download,
-  Loader2,
-  Clock,
   ChevronRight,
 } from 'lucide-react'
-import { Button } from '../ui/Button'
 import { Badge } from '../ui/Badge'
 import { ScrollArea } from '../ui/ScrollArea'
-import { cn, formatRelativeTime, generateId } from '../../lib/utils'
+import { cn, formatRelativeTime } from '../../lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
