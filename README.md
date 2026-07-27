@@ -4,6 +4,13 @@
 
 OpenJuliet is a premium desktop application that brings autonomous AI-powered software engineering to your local machine. Connect GitHub, browse repositories, select issues, and watch as OpenJuliet analyzes, plans, implements, tests, and generates pull requests — all under your control.
 
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+![Electron](https://img.shields.io/badge/electron-35.1-blue)
+![React](https://img.shields.io/badge/react-19.1-purple)
+![TypeScript](https://img.shields.io/badge/typescript-5.7-blue)
+![Tests](https://img.shields.io/badge/tests-106%20passing-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 ![OpenJuliet](resources/icon.svg)
 
 ## Philosophy
@@ -21,26 +28,68 @@ OpenJuliet is built on the belief that AI-assisted development should be:
 - Testing → Review → Commit → Pull Request generation
 - Each stage exposes real-time progress
 
+### 🎨 Beautiful Design
+- Inspired by Nous Research Portal design language
+- Dark theme with purple accent (#6c5ce7)
+- Glassmorphic UI with backdrop blur
+- Smooth framer-motion animations
+- Custom frameless titlebar
+- Command Palette (⌘K)
+- Keyboard-first workflow
+- Professional typography (Inter + JetBrains Mono)
+- Thoughtful empty states and loading states
+- Responsive layout
+
 ### 🌐 Multi-Provider AI
 - OpenAI • Anthropic • Google • OpenRouter • Azure
 - Ollama • LM Studio • vLLM • Custom OpenAI-compatible
 - Hot-swap providers mid-session
+- Real HTTP-based API calls (Node 22 fetch)
+- Streaming token support
 
 ### 🚀 GitHub Integration
+- OAuth & PAT authentication
 - Repository browser • Issue browser • PR browser
-- OAuth & PAT authentication • Commit history • Diff viewer
-- Auto-generated PR descriptions • Suggested reviewers
+- Auto-generated PR descriptions
+- Suggested reviewers
+- Draft PR support
+- Issue linking
 
-### 🎨 Beautiful Design
-- Dark theme with purple accent
-- Glassmorphic UI • Smooth animations
-- Keyboard-first workflow • Professional typography
-- Thoughtful empty states • Polished loading states
+### 📝 Editor Experience
+- Monaco Editor integration (same engine as VS Code)
+- Syntax highlighting for 50+ languages
+- Side-by-side diff viewer
+- File explorer with git decorations
+- Integrated terminal (xterm.js)
+- Search & replace
+- Line numbers, minimap
+
+### 💻 Local Execution
+- Command execution via child_process
+- Docker sandbox support
+- Real-time streaming logs
+- Progress tracking
+- Cancel/pause/resume
 
 ### 📦 Local Storage
-- SQLite database for all local data
+- SQLite database (sql.js) for all local data
 - No mandatory cloud backend
 - Full export/import capability
+- Settings persistence
+- Execution history
+
+### 🧪 Quality Control
+- Run tests • Run linters • Run formatters
+- Error inspection • Auto-fix failures
+- Never leave repo worse than before
+- Self-review and iteration
+
+### 🎛️ Extensibility
+- Plugin architecture
+- Custom providers
+- Custom prompts
+- Workflow templates
+- Import/Export
 
 ## Getting Started
 

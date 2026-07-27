@@ -45,19 +45,19 @@ const sizeStyles: Record<ModalSize, string> = {
 
 /* ──── Animation variants ──── */
 
-const overlayVariants = {
+const overlayVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.2 } },
   exit: { opacity: 0, transition: { duration: 0.15 } }
 }
 
-const modalVariants = {
+const modalVariants: Variants = {
   hidden: { opacity: 0, scale: 0.95, y: 12 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const }
+    transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] }
   },
   exit: {
     opacity: 0,
@@ -67,12 +67,12 @@ const modalVariants = {
   }
 }
 
-const fullscreenVariants = {
+const fullscreenVariants: Variants = {
   hidden: { opacity: 0, scale: 0.98 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const }
+    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] }
   },
   exit: {
     opacity: 0,
@@ -148,7 +148,7 @@ export function Modal({
   }, [open])
 
   /* Determine which variant set to use */
-  const contentVariants: Variants = size === 'fullscreen' ? fullscreenVariants : modalVariants
+  const contentVariants = size === 'fullscreen' ? fullscreenVariants : modalVariants
 
   return (
     <AnimatePresence>
