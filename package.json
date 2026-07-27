@@ -35,6 +35,16 @@
   ],
   "author": "NeticYTOF",
   "license": "MIT",
+  "files": [
+    "out",
+    "resources",
+    "electron-builder.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "publish": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",

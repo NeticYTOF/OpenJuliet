@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenJuliet — Autonomous Coding Agent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #0a0a0f; --surface: #12121a; --border: #2a2a3e; --text: #e8e8f0; --muted: #9090a8; --accent: #6c5ce7; --accent-glow: rgba(108,92,231,0.3); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    header { padding: 48px 0 24px; text-align: center; border-bottom: 1px solid var(--border); }
+    .logo { width: 64px; height: 64px; margin: 0 auto 16px; }
+    h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; background: linear-gradient(135deg, var(--accent), #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { font-size: 1.1rem; color: var(--muted); margin-top: 8px; }
+    .badges { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 500; background: var(--surface); border: 1px solid var(--border); color: var(--muted); text-decoration: none; }
+    .badge:hover { border-color: var(--accent); color: var(--text); }
+    .hero { padding: 80px 0; text-align: center; }
+    .hero h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 16px; }
+    .hero p { color: var(--muted); max-width: 600px; margin: 0 auto 32px; font-size: 0.95rem; }
+    .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 0 20px var(--accent-glow); }
+    .btn-primary:hover { background: #7c6cf7; box-shadow: 0 0 30px var(--accent-glow); transform: translateY(-1px); }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--accent); }
+    .features { padding: 64px 0; border-top: 1px solid var(--border); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 32px; }
+    .feature-card { padding: 24px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); transition: border-color 0.2s; }
+    .feature-card:hover { border-color: var(--accent); }
+    .feature-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .feature-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+    .feature-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    footer { padding: 32px 0; text-align: center; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+    @media (max-width: 640px) { h1 { font-size: 1.8rem; } .hero { padding: 40px 0; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <svg class="logo" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="none" stroke="#6c5ce7" stroke-width="1.5" opacity=".3"/><path d="M32 12l3 12 12 2-9 8 3 12-9-6-9 6 3-12-9-8 12-2z" fill="#a29bfe"/><path d="M24 38q0 8 8 8q5 0 7-4" fill="none" stroke="#6c5ce7" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="34" r="3" fill="#6c5ce7"/></svg>
+      <h1>OpenJuliet</h1>
+      <p class="subtitle">A beautiful, open-source, local-first autonomous coding agent.</p>
+      <div class="badges">
+        <a class="badge" href="https://github.com/NeticYTOF/OpenJuliet">★ Star on GitHub</a>
+        <span class="badge">Electron + React + TypeScript</span>
+        <span class="badge">MIT License</span>
+        <span class="badge">106+ Tests</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h2>From Issue to PR, Autonomously</h2>
+      <p>Connect GitHub, browse repositories, select an issue, and watch as OpenJuliet analyzes, plans, implements, tests, and generates pull requests — all on your machine, under your control.</p>
+      <div class="btn-group">
+        <a class="btn btn-primary" href="https://github.com/NeticYTOF/OpenJuliet/releases">⬇ Download</a>
+        <a class="btn btn-secondary" href="https://github.com/NeticYTOF/OpenJuliet">View Source →</a>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2 style="text-align:center;font-size:1.2rem;font-weight:600;">Features</h2>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-title">Autonomous Workflow</div><div class="feature-desc">Analyze → Plan → Implement → Test → Review → Commit → PR. Full end-to-end execution.</div></div>
+        <div class="feature-card"><div class="feature-icon">🔌</div><div class="feature-title">7 AI Providers</div><div class="feature-desc">OpenAI, Anthropic, Google, OpenRouter, Ollama, LM Studio, vLLM. Hot-swap mid-task.</div></div>
+        <div class="feature-card"><div class="feature-icon">🐙</div><div class="feature-title">GitHub Integration</div><div class="feature-desc">OAuth/PAT auth, repos, issues, PRs, auto-generated descriptions, suggested reviewers.</div></div>
+        <div class="feature-card"><div class="feature-icon">📝</div><div class="feature-title">Monaco Editor</div><div class="feature-desc">Same engine as VS Code. Diff viewer, file explorer with git decorations, syntax highlighting.</div></div>
+        <div class="feature-card"><div class="feature-icon">💻</div><div class="feature-title">Local-First</div><div class="feature-desc">SQLite database. No mandatory cloud. Your code, your data, your control.</div></div>
+        <div class="feature-card"><div class="feature-icon">🎨</div><div class="feature-title">Beautiful UI</div><div class="feature-desc">Dark theme, glassmorphism, framer-motion animations, command palette, keyboard-first.</div></div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Built with ❤️ for the open-source community. MIT Licensed.</p>
+      <p style="margin-top:4px"><a href="https://github.com/NeticYTOF/OpenJuliet" style="color:var(--accent);text-decoration:none;">NeticYTOF/OpenJuliet</a></p>
+    </footer>
+  </div>
+</body>
+</html>

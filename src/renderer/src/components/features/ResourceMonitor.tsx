@@ -7,7 +7,7 @@ import {
   FileEdit,
   Clock,
   Zap,
-  Gauge
+  Timer
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { Card } from '../ui/Card'
@@ -294,7 +294,7 @@ export function ResourceMonitor({
             </div>
             {estimatedRemainingMs !== undefined && estimatedRemainingMs > 0 && (
               <div className="flex items-center gap-1.5">
-                <Gauge size={10} className="text-[var(--color-accent)] shrink-0" />
+                <Timer size={10} className="text-[var(--color-accent)] shrink-0" />
                 <span className="text-[10px] font-mono tabular-nums text-[var(--color-text-muted)]">
                   {formatEstimate(estimatedRemainingMs)}
                 </span>
@@ -311,7 +311,7 @@ export function ResourceMonitor({
     <Card variant="default" padding="md" className={cn('space-y-3', className)}>
       {/* Title */}
       <div className="flex items-center gap-2">
-        <Gauge size={14} className="text-[var(--color-accent)]" />
+        <Timer size={14} className="text-[var(--color-accent)]" />
         <span className="text-xs font-semibold text-[var(--color-text-primary)]">
           Resource Monitor
         </span>

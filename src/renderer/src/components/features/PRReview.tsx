@@ -11,7 +11,6 @@ import {
   MessageSquare,
   ThumbsUp,
   GitMerge,
-  Eye,
   EyeOff,
   ChevronDown,
   ChevronRight,
@@ -22,13 +21,11 @@ import {
   Loader2,
   GitBranch,
   Users,
-  ChevronLeft,
   CircleDot,
 } from 'lucide-react'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Badge } from '../ui/Badge'
-import { ScrollArea } from '../ui/ScrollArea'
 import { AnimatedContainer, AnimatedItem } from '../ui/AnimatedContainer'
 import { cn } from '../../lib/utils'
 import type { DiffFile } from '../editor/DiffViewer'
