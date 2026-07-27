@@ -20,12 +20,7 @@ export default defineConfig({
       'out',
       'dist',
       'dist_electron',
-      'src/main/__tests__',
-      'src/renderer/src/components/features/__tests__/CommandPalette.test.tsx',
-      'src/renderer/src/components/__tests__/SettingsView.test.tsx',
-      'src/renderer/src/components/__tests__/WelcomeScreen.test.tsx',
-      'src/renderer/src/components/editor/__tests__/CodeViewer.test.tsx',
-      'src/renderer/src/components/editor/__tests__/Terminal.test.tsx'
+      'src/main/__tests__'
     ],
     clearMocks: true,
     globals: true,

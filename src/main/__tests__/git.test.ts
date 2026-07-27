@@ -18,7 +18,7 @@ vi.mock('child_process', () => ({
 let git: typeof GitModule
 
 beforeAll(async () => {
-  git = await import('../git/index')
+  git = await import('../git/index.js')
 })
 
 /**

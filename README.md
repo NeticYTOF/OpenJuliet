@@ -4,6 +4,10 @@
 
 OpenJuliet is a premium desktop application that brings autonomous AI-powered software engineering to your local machine. Connect GitHub, browse repositories, select issues, and watch as OpenJuliet analyzes, plans, implements, tests, and generates pull requests — all under your control.
 
+![GitHub last commit](https://img.shields.io/github/last-commit/NeticYTOF/OpenJuliet)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/NeticYTOF/OpenJuliet)
+![GitHub repo size](https://img.shields.io/github/repo-size/NeticYTOF/OpenJuliet)
+
 ![Build](https://img.shields.io/badge/build-passing-brightgreen)
 ![Electron](https://img.shields.io/badge/electron-35.1-blue)
 ![React](https://img.shields.io/badge/react-19.1-purple)

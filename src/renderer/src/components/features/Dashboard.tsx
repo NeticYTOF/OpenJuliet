@@ -9,7 +9,8 @@ import {
   Cpu,
   FolderOpen,
   Plus,
-  Settings
+  Settings,
+  Sparkles
 } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
@@ -17,6 +18,7 @@ import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Badge } from '../ui/Badge'
 import { AnimatedContainer, AnimatedItem } from '../ui/AnimatedContainer'
+import DemoButton from './DemoButton'
 import type { ActiveView } from '../../types'
 
 /**
@@ -98,8 +100,13 @@ export default function Dashboard(): JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
-        <div className="lg:col-span-1">
+        {/* Quick Actions + Demo */}
+        <div className="lg:col-span-1 space-y-4">
+          {/* Demo Button — prominent call-to-action when no project is loaded */}
+          <AnimatedItem>
+            <DemoButton />
+          </AnimatedItem>
+
           <AnimatedItem>
             <Card variant="default" padding="lg">
               <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">

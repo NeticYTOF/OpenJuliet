@@ -52,7 +52,7 @@ let github: GitHubModule
 let OctokitMock: ReturnType<typeof vi.fn>
 
 beforeAll(async () => {
-  github = await import('../github/index')
+  github = await import('../github/index.js')
   // Get a reference to the mocked Octokit constructor after the module is loaded
   const mod = await import('octokit')
   OctokitMock = mod.Octokit as unknown as ReturnType<typeof vi.fn>
