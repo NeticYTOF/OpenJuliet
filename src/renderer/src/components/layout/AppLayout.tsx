@@ -7,6 +7,7 @@ import MainArea from './MainArea'
 import Toast from '../ui/Toast'
 import { OfflineBanner } from '../ui/OfflineBanner'
 import CommandPalette from '../features/CommandPalette'
+import KeyboardShortcutsModal from '../features/KeyboardShortcutsModal'
 
 /**
  * AppLayout — Root layout component that combines Titlebar, Sidebar, and MainArea.
@@ -15,7 +16,7 @@ import CommandPalette from '../features/CommandPalette'
  */
 export default function AppLayout(): JSX.Element {
   const { theme, sidebarOpen } = useAppStore()
-  const { sidebarCollapsed, setSidebarCollapsed } = useSettingsStore()
+  const { sidebarCollapsed: _sc, setSidebarCollapsed } = useSettingsStore()
   const { notifications, dismissNotification } = useAppStore()
 
   /* Sync theme to document */
@@ -71,6 +72,9 @@ export default function AppLayout(): JSX.Element {
 
       {/* Command Palette */}
       <CommandPalette />
+
+      {/* Keyboard Shortcuts Modal */}
+      <KeyboardShortcutsModal />
     </div>
   )
 }

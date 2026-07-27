@@ -1,0 +1,124 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "close": "閉じる",
+    "yes": "はい",
+    "no": "いいえ",
+    "ok": "OK",
+    "confirm": "確認",
+    "reset": "リセット",
+    "apply": "適用",
+    "loading": "読み込み中…",
+    "search": "検索",
+    "filter": "フィルター",
+    "clear": "クリア",
+    "retry": "再試行",
+    "back": "戻る",
+    "next": "次へ",
+    "finish": "完了",
+    "submit": "送信",
+    "copy": "コピー",
+    "copied": "コピーしました！",
+    "select": "選択",
+    "deselect": "選択解除",
+    "required": "必須",
+    "optional": "任意",
+    "open": "開く",
+    "add": "追加",
+    "remove": "削除",
+    "update": "更新",
+    "error": "エラー",
+    "warning": "警告",
+    "success": "成功",
+    "info": "情報"
+  },
+
+  "app": {
+    "name": "OpenJuliet",
+    "version": "バージョン {version}",
+    "updateAvailable": "アップデート {version} が利用可能です",
+    "updateNotAvailable": "最新版です",
+    "installUpdate": "インストールして再起動",
+    "changelog": "リリースノート"
+  },
+
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "repositories": "リポジトリ",
+    "issues": "課題",
+    "tasks": "タスク",
+    "history": "履歴",
+    "editor": "エディター",
+    "settings": "設定"
+  },
+
+  "dashboard": {
+    "title": "ダッシュボード",
+    "welcome": "おかえりなさい、{name}！",
+    "recentProjects": "最近のプロジェクト"
+  },
+
+  "settings": {
+    "title": "設定",
+    "general": "一般",
+    "theme": "テーマ",
+    "darkTheme": "ダーク",
+    "lightTheme": "ライト",
+    "fontSize": "フォントサイズ",
+    "providers": "プロバイダー",
+    "apiKey": "APIキー",
+    "git": "Git設定"
+  },
+
+  "tasks": {
+    "title": "タスク",
+    "newTask": "新しいタスク",
+    "lowPriority": "低",
+    "mediumPriority": "中",
+    "highPriority": "高",
+    "criticalPriority": "重大"
+  },
+
+  "editor": {
+    "title": "エディター",
+    "noFileOpen": "開いているファイルはありません",
+    "terminal": "ターミナル"
+  },
+
+  "errors": {
+    "generic": "問題が発生しました",
+    "notFound": "見つかりません",
+    "network": "ネットワークエラー",
+    "offline": "オフラインです",
+    "tryAgain": "もう一度お試しください"
+  },
+
+  "time": {
+    "justNow": "たった今",
+    "minutesAgo": "{count}分前",
+    "hoursAgo": "{count}時間前",
+    "today": "今日",
+    "now": "今"
+  },
+
+  "welcome": {
+    "title": "OpenJulietへようこそ",
+    "getStarted": "始める"
+  },
+
+  "git": {
+    "title": "Git",
+    "commit": "コミット",
+    "changes": "変更"
+  },
+
+  "about": {
+    "title": "OpenJulietについて",
+    "version": "バージョン: {version}",
+    "repository": "GitHubリポジトリ"
+  }
+}

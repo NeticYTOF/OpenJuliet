@@ -296,6 +296,12 @@ export interface AppAPI {
   openExternal(url: string): Promise<void>
 }
 
+export interface UpdateAPI {
+  check(): Promise<{ success: boolean; data?: unknown; error?: string }>
+  download(): Promise<{ success: boolean }>
+  install(): Promise<{ success: boolean }>
+}
+
 export interface ShellAPI {
   exec(command: string, options?: { cwd?: string; timeout?: number }): Promise<ShellOutput>
 }
@@ -325,6 +331,7 @@ export interface ElectronAPI {
   settings: SettingsAPI
   db: DbAPI
   events: EventsAPI
+  update: UpdateAPI
 }
 
 // Augment the global Window interface so the renderer can access

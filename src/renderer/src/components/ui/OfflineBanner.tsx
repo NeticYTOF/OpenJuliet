@@ -62,7 +62,6 @@ export function OfflineBanner({
       window.removeEventListener('offline', handleOffline)
     }
   }, [handleOnline, handleOffline])
-  }, [handleOnline, handleOffline])
 
   const handleRetry = useCallback((): void => {
     onRetry?.()

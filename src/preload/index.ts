@@ -195,6 +195,21 @@ contextBridge.exposeInMainWorld('api', {
     }
   },
 
+  // ── Update (auto-updater) ─────────────────────────────────────────────
+  update: {
+    check(): Promise<{ success: boolean; data?: unknown; error?: string }> {
+      return ipcRenderer.invoke('update:check')
+    },
+
+    download(): Promise<{ success: boolean }> {
+      return ipcRenderer.invoke('update:download')
+    },
+
+    install(): Promise<{ success: boolean }> {
+      return ipcRenderer.invoke('update:install')
+    }
+  },
+
   // ── Shell ──────────────────────────────────────────────────────────────
   shell: {
     exec(command: string, options?: { cwd?: string; timeout?: number }): Promise<ShellOutput> {

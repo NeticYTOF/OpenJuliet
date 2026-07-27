@@ -1,0 +1,124 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "confirm": "Confirmer",
+    "reset": "Réinitialiser",
+    "apply": "Appliquer",
+    "loading": "Chargement…",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "clear": "Effacer",
+    "retry": "Réessayer",
+    "back": "Retour",
+    "next": "Suivant",
+    "finish": "Terminer",
+    "submit": "Envoyer",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "select": "Sélectionner",
+    "deselect": "Désélectionner",
+    "required": "Requis",
+    "optional": "Facultatif",
+    "open": "Ouvrir",
+    "add": "Ajouter",
+    "remove": "Supprimer",
+    "update": "Mettre à jour",
+    "error": "Erreur",
+    "warning": "Avertissement",
+    "success": "Succès",
+    "info": "Info"
+  },
+
+  "app": {
+    "name": "OpenJuliet",
+    "version": "Version {version}",
+    "updateAvailable": "Mise à jour {version} disponible",
+    "updateNotAvailable": "Vous êtes à jour",
+    "installUpdate": "Installer et Redémarrer",
+    "changelog": "Notes de version"
+  },
+
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "repositories": "Dépôts",
+    "issues": "Problèmes",
+    "tasks": "Tâches",
+    "history": "Historique",
+    "editor": "Éditeur",
+    "settings": "Paramètres"
+  },
+
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour, {name} !",
+    "recentProjects": "Projets récents"
+  },
+
+  "settings": {
+    "title": "Paramètres",
+    "general": "Général",
+    "theme": "Thème",
+    "darkTheme": "Sombre",
+    "lightTheme": "Clair",
+    "fontSize": "Taille de police",
+    "providers": "Fournisseurs",
+    "apiKey": "Clé API",
+    "git": "Configuration Git"
+  },
+
+  "tasks": {
+    "title": "Tâches",
+    "newTask": "Nouvelle tâche",
+    "lowPriority": "Basse",
+    "mediumPriority": "Moyenne",
+    "highPriority": "Haute",
+    "criticalPriority": "Critique"
+  },
+
+  "editor": {
+    "title": "Éditeur",
+    "noFileOpen": "Aucun fichier ouvert",
+    "terminal": "Terminal"
+  },
+
+  "errors": {
+    "generic": "Une erreur est survenue",
+    "notFound": "Non trouvé",
+    "network": "Erreur réseau",
+    "offline": "Vous êtes hors ligne",
+    "tryAgain": "Veuillez réessayer"
+  },
+
+  "time": {
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {count} minute | Il y a {count} minutes",
+    "hoursAgo": "Il y a {count} heure | Il y a {count} heures",
+    "today": "Aujourd'hui",
+    "now": "Maintenant"
+  },
+
+  "welcome": {
+    "title": "Bienvenue sur OpenJuliet",
+    "getStarted": "Commencer"
+  },
+
+  "git": {
+    "title": "Git",
+    "commit": "Valider",
+    "changes": "Modifications"
+  },
+
+  "about": {
+    "title": "À propos d'OpenJuliet",
+    "version": "Version : {version}",
+    "repository": "Dépôt GitHub"
+  }
+}

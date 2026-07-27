@@ -15,6 +15,9 @@ export type ActiveView =
 /** Theme mode */
 export type ThemeMode = 'dark' | 'light'
 
+/** Animation speed preference */
+export type AnimationSpeed = 'normal' | 'reduced' | 'none'
+
 /** Notification severity level */
 export type NotificationType = 'success' | 'warning' | 'error' | 'info'
 
@@ -167,6 +170,10 @@ export interface AppSettings {
   gitEmail: string
   providers: AIProvider[]
   github: GitHubAuth
+  /* ─── Theme customization ─── */
+  accentColor: string
+  bgDensity: number
+  animationSpeed: AnimationSpeed
 }
 
 export interface ActivityItem {

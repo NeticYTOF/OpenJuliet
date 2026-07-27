@@ -47,8 +47,13 @@ export function useKeyboard(): void {
 
       const shortcuts: ShortcutMap = {
         /* Cmd/Ctrl+K — Command palette */
-        ...(isMeta && key === 'k'
+        ...(isMeta && key === 'k' && !event.shiftKey
           ? { 'cmd+k': () => useAppStore.getState().toggleCommandPalette() }
+          : {}),
+
+        /* Cmd/Ctrl+Shift+K — Keyboard shortcuts */
+        ...(isMeta && key === 'k' && event.shiftKey
+          ? { 'cmd+shift+k': () => useAppStore.getState().toggleKeyboardShortcuts() }
           : {}),
 
         /* Cmd/Ctrl+B — Toggle sidebar */

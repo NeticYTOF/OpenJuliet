@@ -1,0 +1,144 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "close": "Cerrar",
+    "yes": "Sí",
+    "no": "No",
+    "ok": "OK",
+    "confirm": "Confirmar",
+    "reset": "Restablecer",
+    "apply": "Aplicar",
+    "loading": "Cargando…",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpiar",
+    "retry": "Reintentar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "submit": "Enviar",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "select": "Seleccionar",
+    "deselect": "Deseleccionar",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "open": "Abrir",
+    "add": "Añadir",
+    "remove": "Eliminar",
+    "update": "Actualizar",
+    "error": "Error",
+    "warning": "Advertencia",
+    "success": "Éxito",
+    "info": "Información"
+  },
+
+  "app": {
+    "name": "OpenJuliet",
+    "version": "Versión {version}",
+    "updateAvailable": "Actualización {version} disponible",
+    "updateNotAvailable": "Estás actualizado",
+    "downloading": "Descargando actualización…",
+    "installUpdate": "Instalar y Reiniciar",
+    "downloadUpdate": "Descargar Actualización",
+    "changelog": "Registro de cambios"
+  },
+
+  "nav": {
+    "dashboard": "Panel",
+    "repositories": "Repositorios",
+    "issues": "Incidencias",
+    "tasks": "Tareas",
+    "history": "Historial",
+    "editor": "Editor",
+    "settings": "Ajustes"
+  },
+
+  "dashboard": {
+    "title": "Panel",
+    "welcome": "¡Bienvenido de nuevo, {name}!",
+    "recentProjects": "Proyectos recientes",
+    "noProjects": "Sin proyectos recientes"
+  },
+
+  "settings": {
+    "title": "Ajustes",
+    "general": "General",
+    "appearance": "Apariencia",
+    "theme": "Tema",
+    "darkTheme": "Oscuro",
+    "lightTheme": "Claro",
+    "fontSize": "Tamaño de fuente",
+    "workspaceDir": "Directorio de trabajo",
+    "providers": "Proveedores",
+    "addProvider": "Añadir proveedor",
+    "apiKey": "Clave API",
+    "git": "Configuración de Git",
+    "gitUserName": "Nombre de usuario",
+    "gitEmail": "Correo electrónico"
+  },
+
+  "tasks": {
+    "title": "Tareas",
+    "newTask": "Nueva tarea",
+    "priority": "Prioridad",
+    "lowPriority": "Baja",
+    "mediumPriority": "Media",
+    "highPriority": "Alta",
+    "criticalPriority": "Crítica",
+    "queued": "En cola",
+    "running": "Ejecutando",
+    "completed": "Completada",
+    "failed": "Fallida",
+    "cancelled": "Cancelada"
+  },
+
+  "editor": {
+    "title": "Editor",
+    "noFileOpen": "Ningún archivo abierto",
+    "saveFile": "Guardar",
+    "terminal": "Terminal"
+  },
+
+  "errors": {
+    "generic": "Algo salió mal",
+    "notFound": "No encontrado",
+    "network": "Error de red",
+    "offline": "Estás desconectado",
+    "tryAgain": "Inténtalo de nuevo"
+  },
+
+  "time": {
+    "justNow": "Justo ahora",
+    "minutesAgo": "Hace {count} minuto | Hace {count} minutos",
+    "hoursAgo": "Hace {count} hora | Hace {count} horas",
+    "daysAgo": "Hace {count} día | Hace {count} días",
+    "today": "Hoy",
+    "now": "Ahora"
+  },
+
+  "welcome": {
+    "title": "Bienvenido a OpenJuliet",
+    "getStarted": "Comenzar"
+  },
+
+  "git": {
+    "title": "Git",
+    "commitMessage": "Mensaje de commit",
+    "commit": "Confirmar",
+    "stageAll": "Preparar todo",
+    "changes": "Cambios",
+    "noChanges": "Sin cambios que confirmar"
+  },
+
+  "about": {
+    "title": "Acerca de OpenJuliet",
+    "version": "Versión: {version}",
+    "repository": "Repositorio en GitHub",
+    "checkUpdates": "Buscar actualizaciones"
+  }
+}

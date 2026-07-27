@@ -1,4 +1,4 @@
-import type { AppSettings, TaskPriority } from '../types'
+import type { AppSettings, TaskPriority, AnimationSpeed } from '../types'
 
 /* ──── Application Metadata ──── */
 
@@ -30,7 +30,11 @@ export const DEFAULT_SETTINGS: AppSettings = {
   github: {
     isConnected: false,
     method: 'none'
-  }
+  },
+  /* ─── Theme customization defaults ─── */
+  accentColor: '#6c5ce7',
+  bgDensity: 50,
+  animationSpeed: 'normal' as AnimationSpeed
 }
 
 /* ──── AI Provider Presets ──── */
@@ -112,15 +116,71 @@ export const PRIORITIES: { value: TaskPriority; label: string; color: string }[]
   { value: 'critical', label: 'Critical', color: 'var(--color-error)' }
 ]
 
-/* ──── Keyboard Shortcut Descriptions ──── */
+/* ──── Keyboard Shortcuts (grouped by category) ──── */
 
-export const KEYBOARD_SHORTCUTS = [
-  { keys: ['⌘', 'K'], description: 'Command palette' },
-  { keys: ['⌘', 'B'], description: 'Toggle sidebar' },
-  { keys: ['⌘', ','], description: 'Open settings' },
-  { keys: ['Esc'], description: 'Close modals / dialogs' },
-  { keys: ['⌘', '1–6'], description: 'Navigate views' }
+export interface ShortcutEntry {
+  keys: string[]
+  description: string
+  category: 'Navigation' | 'Editor' | 'Tasks' | 'GitHub' | 'General'
+}
+
+export const KEYBOARD_SHORTCUTS: ShortcutEntry[] = [
+  /* ─── Navigation ─── */
+  { keys: ['⌘', '1'], description: 'Dashboard view', category: 'Navigation' },
+  { keys: ['⌘', '2'], description: 'Repositories view', category: 'Navigation' },
+  { keys: ['⌘', '3'], description: 'Issues view', category: 'Navigation' },
+  { keys: ['⌘', '4'], description: 'Tasks view', category: 'Navigation' },
+  { keys: ['⌘', '5'], description: 'History view', category: 'Navigation' },
+  { keys: ['⌘', '6'], description: 'Editor view', category: 'Navigation' },
+  { keys: ['⌘', ','], description: 'Open settings', category: 'Navigation' },
+  { keys: ['⌘', 'B'], description: 'Toggle sidebar', category: 'Navigation' },
+  { keys: ['⌘', 'Shift', 'K'], description: 'Keyboard shortcuts reference', category: 'Navigation' },
+  /* ─── Editor ─── */
+  { keys: ['⌘', 'S'], description: 'Save file', category: 'Editor' },
+  { keys: ['⌘', 'Z'], description: 'Undo', category: 'Editor' },
+  { keys: ['⌘', 'Shift', 'Z'], description: 'Redo', category: 'Editor' },
+  { keys: ['⌘', 'F'], description: 'Find in file', category: 'Editor' },
+  { keys: ['⌘', 'H'], description: 'Find and replace', category: 'Editor' },
+  { keys: ['⌘', 'D'], description: 'Duplicate selection', category: 'Editor' },
+  { keys: ['⌘', '/'], description: 'Toggle comment', category: 'Editor' },
+  { keys: ['⌘', ']'], description: 'Indent', category: 'Editor' },
+  { keys: ['⌘', '['], description: 'Outdent', category: 'Editor' },
+  /* ─── Tasks ─── */
+  { keys: ['⌘', 'N'], description: 'New task', category: 'Tasks' },
+  { keys: ['⌘', 'Shift', 'Enter'], description: 'Run selected task', category: 'Tasks' },
+  { keys: ['⌘', '. '], description: 'Cancel running task', category: 'Tasks' },
+  { keys: ['⌘', 'P'], description: 'Pause / resume task', category: 'Tasks' },
+  { keys: ['⌘', 'Shift', 'P'], description: 'Open task palette', category: 'Tasks' },
+  /* ─── GitHub ─── */
+  { keys: ['⌘', 'Shift', 'G'], description: 'Open GitHub panel', category: 'GitHub' },
+  { keys: ['⌘', 'Shift', 'I'], description: 'Open issues', category: 'GitHub' },
+  { keys: ['⌘', 'Shift', 'R'], description: 'Create PR', category: 'GitHub' },
+  { keys: ['⌘', 'Shift', 'C'], description: 'Clone repository', category: 'GitHub' },
+  /* ─── General ─── */
+  { keys: ['⌘', 'K'], description: 'Command palette', category: 'General' },
+  { keys: ['⌘', 'Shift', 'K'], description: 'Keyboard shortcuts', category: 'General' },
+  { keys: ['Esc'], description: 'Close modals / dialogs', category: 'General' },
+  { keys: ['⌘', 'W'], description: 'Close tab / panel', category: 'General' },
+  { keys: ['⌘', 'Q'], description: 'Quit application', category: 'General' },
+  { keys: ['⌘', 'M'], description: 'Minimize window', category: 'General' },
+  { keys: ['⌘', 'R'], description: 'Reload app', category: 'General' },
+  { keys: ['⌘', 'Shift', 'T'], description: 'Theme customizer', category: 'General' }
 ]
+
+/* ──── Theme Preset Colors ──── */
+
+export const THEME_PRESET_COLORS = [
+  { name: 'Purple', value: '#6c5ce7' },
+  { name: 'Blue', value: '#4a9eff' },
+  { name: 'Cyan', value: '#00d2d3' },
+  { name: 'Green', value: '#00b894' },
+  { name: 'Lime', value: '#a8e053' },
+  { name: 'Yellow', value: '#fdcb6e' },
+  { name: 'Orange', value: '#e17055' },
+  { name: 'Red', value: '#ff6b6b' },
+  { name: 'Pink', value: '#fd79a8' },
+  { name: 'Rose', value: '#e84393' }
+] as const
 
 /* ──── Storage Keys ──── */
 

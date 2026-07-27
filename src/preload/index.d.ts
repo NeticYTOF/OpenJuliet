@@ -29,6 +29,7 @@ export type {
   SettingsAPI,
   ShellAPI,
   ShellOutput,
+  UpdateAPI,
   Workspace,
   WorkspaceAPI
 } from './types'

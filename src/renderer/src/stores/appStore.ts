@@ -17,6 +17,7 @@ interface AppState {
   isFirstLaunch: boolean
   commandPaletteOpen: boolean
   commandPaletteRecent: string[]
+  keyboardShortcutsOpen: boolean
 
   /* ──── Actions ──── */
   toggleSidebar: () => void
@@ -32,6 +33,8 @@ interface AppState {
   setCommandPaletteOpen: (open: boolean) => void
   toggleCommandPalette: () => void
   addToCommandPaletteRecent: (id: string) => void
+  setKeyboardShortcutsOpen: (open: boolean) => void
+  toggleKeyboardShortcuts: () => void
 }
 
 function loadRecent(): string[] {
@@ -59,6 +62,7 @@ export const useAppStore = create<AppState>((set) => ({
   isFirstLaunch: !localStorage.getItem('openjuliet:onboarding'),
   commandPaletteOpen: false,
   commandPaletteRecent: loadRecent(),
+  keyboardShortcutsOpen: false,
 
   /* ──── Actions ──── */
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
@@ -114,5 +118,10 @@ export const useAppStore = create<AppState>((set) => ({
       const updated = [id, ...state.commandPaletteRecent.filter((x) => x !== id)]
       saveRecent(updated)
       return { commandPaletteRecent: updated }
-    })
+    }),
+
+  setKeyboardShortcutsOpen: (open) => set({ keyboardShortcutsOpen: open }),
+
+  toggleKeyboardShortcuts: () =>
+    set((state) => ({ keyboardShortcutsOpen: !state.keyboardShortcutsOpen }))
 }))
