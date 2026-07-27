@@ -71,21 +71,23 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ): JSX.Element => {
-    return (
-      <motion.button
-        ref={ref}
-        whileHover={{ scale: disabled || loading ? 1 : 1.02 }}
-        whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
-        className={cn(
-          'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]',
-          variantStyles[variant],
-          sizeStyles[size],
-          (disabled || loading) && 'opacity-50 cursor-not-allowed pointer-events-none',
-          fullWidth && 'w-full',
-          className
-        )}
-        disabled={disabled || loading}
-        {...props}
+  /* Strip HTML event handlers that conflict with framer-motion's motion props */
+  const { onDrag: _od, onDragStart: _ods, onDragEnd: _ode, ...safeProps } = props
+  return (
+    <motion.button
+      ref={ref}
+      whileHover={{ scale: disabled || loading ? 1 : 1.02 }}
+      whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
+      className={cn(
+        'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]',
+        variantStyles[variant],
+        sizeStyles[size],
+        (disabled || loading) && 'opacity-50 cursor-not-allowed pointer-events-none',
+        fullWidth && 'w-full',
+        className
+      )}
+      disabled={disabled || loading}
+      {...safeProps}
       >
         {loading ? (
           <Loader2 size={size === 'sm' ? 14 : size === 'lg' ? 20 : 16} className="animate-spin" />

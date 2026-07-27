@@ -90,6 +90,9 @@ export function AnimatedContainer({
   const variants = customVariants || variantMap[animation]
   const isStagger = animation === 'stagger'
 
+  /* Strip HTML event handlers that conflict with framer-motion's motion props */
+  const { onDrag: _od, onDragStart: _ods, onDragEnd: _ode, ...safeProps } = props
+
   if (animation === 'none') {
     return <div className={className}>{children}</div>
   }
@@ -101,7 +104,7 @@ export function AnimatedContainer({
         variants={staggerVariants}
         initial="hidden"
         animate="visible"
-        {...props}
+        {...safeProps}
       >
         {children}
       </motion.div>
@@ -115,7 +118,7 @@ export function AnimatedContainer({
       initial="hidden"
       animate="visible"
       transition={{ delay }}
-      {...props}
+      {...safeProps}
     >
       {children}
     </motion.div>
@@ -130,8 +133,11 @@ export function AnimatedItem({
   children,
   ...props
 }: HTMLAttributes<HTMLDivElement>): JSX.Element {
+  /* Strip HTML event handlers that conflict with framer-motion's motion props */
+  const { onDrag: _od, onDragStart: _ods, onDragEnd: _ode, ...safeProps } = props
+
   return (
-    <motion.div className={cn(className)} variants={itemVariants} {...props}>
+    <motion.div className={cn(className)} variants={itemVariants} {...safeProps}>
       {children}
     </motion.div>
   )

@@ -19,8 +19,9 @@
     "package:linux": "electron-vite build && electron-builder --linux",
     "package:all": "electron-vite build && electron-builder --win --mac --linux",
     "clean": "rm -rf out dist dist_electron node_modules/.vite",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "coding-agent",
@@ -72,6 +73,8 @@
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^2.0.0",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^22.15.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
@@ -87,9 +90,11 @@
     "electron-vite": "^5.0.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "jsdom": "^29.1.1",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.0",
-    "vite": "^5.4.19"
+    "vite": "^5.4.19",
+    "vitest": "^4.1.10"
   }
 }

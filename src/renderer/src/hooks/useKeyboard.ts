@@ -66,8 +66,8 @@ export function useKeyboard(): void {
           ? { escape: () => handleEscape() }
           : {}),
 
-        /* Cmd/Ctrl+1-6 — Navigate views */
-        ...(isMeta && ['1', '2', '3', '4', '5', '6'].includes(key)
+        /* Cmd/Ctrl+1-7 — Navigate views */
+        ...(isMeta && ['1', '2', '3', '4', '5', '6', '7'].includes(key)
           ? {
               [`cmd+${key}`]: () => {
                 const views: ActiveView[] = [
@@ -76,6 +76,7 @@ export function useKeyboard(): void {
                   'issues',
                   'tasks',
                   'history',
+                  'editor',
                   'settings'
                 ]
                 const index = parseInt(key) - 1
