@@ -419,8 +419,8 @@ export function NotificationCenter({
               exit={{ opacity: 0, y: -8, scale: 0.96 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className="absolute right-0 top-full mt-2 z-50 w-[400px] max-h-[600px] rounded-xl overflow-hidden
-                bg-[rgba(26,26,42,0.95)] backdrop-blur-[20px]
-                border border-[rgba(42,42,62,0.6)] shadow-[var(--shadow-lg)]
+                bg-[var(--color-surface)] backdrop-blur-[20px]
+                border border-[var(--color-border)] shadow-lg
                 flex flex-col"
               style={{
                 maxHeight: 'min(600px, calc(100vh - 100px))',
@@ -475,7 +475,7 @@ export function NotificationCenter({
                     No notifications
                   </p>
                   <p className="text-xs text-[var(--color-text-muted)] mt-1">
-                    You're all caught up!
+                    You&apos;re all caught up!
                   </p>
                 </div>
               ) : (
@@ -534,4 +534,3 @@ export function NotificationCenter({
   )
 }
 
-export default NotificationCenter

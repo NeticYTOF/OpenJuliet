@@ -137,8 +137,8 @@ export default function TaskManager(): JSX.Element {
                 className={cn(
                   'flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
                   task.status === 'running'
-                    ? 'bg-[rgba(108,92,231,0.08)] border-[rgba(108,92,231,0.2)]'
-                    : 'bg-[rgba(30,30,46,0.4)] border-transparent hover:bg-[var(--color-bg-tertiary)]'
+                    ? 'bg-[var(--color-accent-subtle)] border-[var(--color-accent)]/20'
+                    : 'bg-[var(--color-bg-tertiary)]/40 border-transparent hover:bg-[var(--color-bg-tertiary)]'
                 )}
                 draggable
                 onDragStart={() => setDraggedIndex(index)}

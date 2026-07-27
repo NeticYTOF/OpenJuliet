@@ -509,3 +509,34 @@ html.theme-transitioning *::after {
   -webkit-app-region: no-drag;
   app-region: no-drag;
 }
+
+/* ========================================================================
+   Reduced Motion — Accessibility override for vestibular disorders
+   ======================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Animations are disabled entirely via the .anim-none CSS class */
+.anim-none *,
+.anim-none *::before,
+.anim-none *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Reduced speed via .anim-reduced class */
+.anim-reduced *,
+.anim-reduced *::before,
+.anim-reduced *::after {
+  animation-duration: 0.5s !important;
+  transition-duration: 0.15s !important;
+}

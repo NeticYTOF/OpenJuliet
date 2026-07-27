@@ -215,4 +215,4 @@ export function AboutModal({ open, onClose, className }: AboutModalProps): JSX.E
   )
 }
 
-export default AboutModal
+

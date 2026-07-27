@@ -27,6 +27,9 @@ interface ShortcutMap {
  * }
  */
 export function useKeyboard(): void {
+  const { toggleSidebar, setView } = useAppStore()
+
+  const handleKeyDown = useCallback(
     (event: KeyboardEvent): void => {
       const isMeta = event.metaKey || event.ctrlKey
       const key = event.key.toLowerCase()
@@ -123,4 +126,3 @@ function handleEscape(): void {
   if (modalOverlay) return
 }
 
-export default useKeyboard

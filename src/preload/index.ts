@@ -130,11 +130,11 @@ contextBridge.exposeInMainWorld('api', {
     },
 
     getStatus(taskId: string): Promise<ExecutionStatus> {
-      return ipcRenderer.invoke('execution:get-status', taskId)
+      return ipcRenderer.invoke('execution:status', taskId)
     },
 
     getHistory(projectId?: string): Promise<ExecutionTask[]> {
-      return ipcRenderer.invoke('execution:get-history', projectId)
+      return ipcRenderer.invoke('execution:history', projectId)
     },
 
     onProgress(callback: (data: { taskId: string; progress: number; message?: string }) => void): () => void {
@@ -176,7 +176,7 @@ contextBridge.exposeInMainWorld('api', {
     },
 
     getProjects(): Promise<Project[]> {
-      return ipcRenderer.invoke('workspace:get-projects')
+      return ipcRenderer.invoke('workspace:list-projects')
     }
   },
 

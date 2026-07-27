@@ -71,8 +71,8 @@ const iconVariants = {
     opacity: 1,
     scale: 1,
     rotate: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 15 }
-  },
+    transition: { type: 'spring' as const, stiffness: 300, damping: 15 }
+  } as const,
   exit: {
     opacity: 0,
     scale: 0.5,

@@ -110,4 +110,3 @@ export function useFileDialog(mode: 'file' | 'directory' = 'file'): {
   return { path, loading, error, open }
 }
 
-export default useIPC

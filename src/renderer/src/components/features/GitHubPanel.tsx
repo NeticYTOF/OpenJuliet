@@ -200,7 +200,7 @@ function GitHubRepos({ repos, loading, error, searchQuery, onSearchChange }: {
               key={repo.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-4 rounded-lg bg-[rgba(30,30,46,0.6)] border border-[rgba(42,42,62,0.5)] hover:border-[rgba(108,92,231,0.3)] transition-colors cursor-pointer"
+              className="p-4 rounded-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] hover:border-[var(--color-accent)]/30 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-2 mb-1">
                 <GitBranch size={14} className="text-[var(--color-text-muted)]" />

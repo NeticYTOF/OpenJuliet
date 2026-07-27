@@ -683,9 +683,4 @@ export function IssueDetail({
   )
 }
 
-// Helper icon for merged state in linked PRs
-function GitMerge(props: { size: number; style?: React.CSSProperties }): JSX.Element {
-  return <GitPullRequest size={props.size} style={props.style} />
-}
-
 export default IssueDetail

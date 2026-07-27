@@ -143,4 +143,3 @@ export function AnimatedItem({
   )
 }
 
-export default AnimatedContainer

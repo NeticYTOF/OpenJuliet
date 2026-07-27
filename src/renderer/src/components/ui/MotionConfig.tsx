@@ -43,4 +43,4 @@ export function MotionConfig({ children }: { children: ReactNode }): JSX.Element
   )
 }
 
-export default MotionConfig
+

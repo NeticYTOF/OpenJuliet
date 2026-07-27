@@ -121,4 +121,3 @@ export function useLocale(): UseLocaleReturn {
   }
 }
 
-export default useLocale

@@ -97,12 +97,12 @@ const panelVariants = {
   visible: {
     x: 0,
     opacity: 1,
-    transition: { type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }
-  },
+    transition: { type: 'spring' as const, stiffness: 260, damping: 28, mass: 0.8 }
+  } as const,
   exit: {
     x: '100%',
     opacity: 0,
-    transition: { duration: 0.2, ease: [0.65, 0, 0.35, 1] }
+    transition: { duration: 0.2, ease: [0.65, 0, 0.35, 1] as const }
   }
 }
 
@@ -111,8 +111,8 @@ const stepContentVariants = {
   center: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] }
-  },
+    transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }
+  } as const,
   exit: { opacity: 0, x: -40, transition: { duration: 0.2 } }
 }
 
@@ -129,7 +129,7 @@ const staggerItem = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] as const }
   }
 }
 

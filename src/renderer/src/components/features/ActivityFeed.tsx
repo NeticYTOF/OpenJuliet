@@ -405,4 +405,4 @@ export function ActivityFeed({
   )
 }
 
-export default ActivityFeed
+
