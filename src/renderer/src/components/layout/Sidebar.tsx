@@ -8,7 +8,8 @@ import {
   Settings,
   Github,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Code
 } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
@@ -27,6 +28,7 @@ function getNavIcon(id: string): React.ComponentType<{ className?: string; size?
     issues: Bug,
     tasks: ListChecks,
     history: History,
+    editor: Code,
     settings: Settings
   }
   return icons[id] || LayoutDashboard

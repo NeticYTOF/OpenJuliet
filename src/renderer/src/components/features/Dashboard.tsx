@@ -89,7 +89,7 @@ export default function Dashboard(): JSX.Element {
                   </span>
                 </div>
                 <div className="p-3 rounded-lg" style={{ backgroundColor: `${stat.color}15` }}>
-                  <stat.icon size={20} style={{ color: stat.color }} />
+                  <stat.icon size={20} />
                 </div>
               </div>
             </Card>

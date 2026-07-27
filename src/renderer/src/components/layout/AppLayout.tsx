@@ -30,10 +30,10 @@ export default function AppLayout(): JSX.Element {
     (e: KeyboardEvent) => {
       const isMeta = e.metaKey || e.ctrlKey
 
-      // Cmd/Ctrl+1-6 — Navigate views
-      if (isMeta && e.key >= '1' && e.key <= '6') {
+      // Cmd/Ctrl+1-7 — Navigate views (⌘, for Settings)
+      if (isMeta && e.key >= '1' && e.key <= '7') {
         e.preventDefault()
-        const views = ['dashboard', 'repositories', 'issues', 'tasks', 'history', 'editor']
+        const views = ['dashboard', 'repositories', 'issues', 'tasks', 'history', 'editor', 'settings']
         const index = parseInt(e.key) - 1
         useAppStore.getState().setView(views[index] as never)
       }

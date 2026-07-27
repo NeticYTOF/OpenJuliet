@@ -53,8 +53,8 @@ export interface FileExplorerProps {
   onFileSelect?: (item: FileItem) => void
   /** Called when a directory is expanded/collapsed */
   onToggleExpand?: (item: FileItem) => void
-  /** Called when a rename is requested */
-  onRename?: (item: FileItem, newName: string) => void
+  /** Called when a rename is requested (returns the new name) */
+  onRename?: (item: FileItem) => void
   /** Called when a delete is requested */
   onDelete?: (item: FileItem) => void
   /** Called when a file is double-clicked */
@@ -205,7 +205,7 @@ function ContextMenu({
 interface TreeNodeProps {
   item: FileItem
   depth: number
-  selectedId: string | null
+  selectedId: string | null | undefined
   onSelect: (item: FileItem) => void
   onToggle: (item: FileItem) => void
   onContextMenu: (e: React.MouseEvent, item: FileItem) => void

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
+import { cn } from '../../lib/utils'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { Card } from '../ui/Card'

@@ -4,8 +4,12 @@
  * Provides a sandboxed environment for executing shell commands safely.
  * Supports optional Docker-based sandboxing for enhanced isolation.
  *
- * Each sandbox instance manages a working directory and tracks spawned
- * child processes for cancellation and lifecycle management.
+ * Key features:
+ *   - Creates temporary directories for isolated execution
+ *   - Optionally detects Docker availability and uses containers
+ *   - Manages spawned child processes with lifecycle tracking
+ *   - Enforces configurable timeouts with SIGTERM → SIGKILL escalation
+ *   - Cleans up temp directories after execution
  *
  * @module sandbox
  */
@@ -13,7 +17,16 @@
 import { spawn, type ChildProcess } from 'child_process'
 import { promises as fs } from 'fs'
 import path from 'path'
+import os from 'os'
 import { randomUUID } from 'crypto'
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const DEFAULT_TIMEOUT = 300_000 // 5 minutes
+const SIGKILL_GRACE_MS = 3000 // Wait before sending SIGKILL
+const TEMP_PREFIX = 'openjuliet-sandbox-'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,6 +43,8 @@ export interface SandboxOptions {
   timeout?: number
   /** Environment variables to set */
   env?: Record<string, string>
+  /** Whether to auto-clean the directory after destruction */
+  autoClean?: boolean
 }
 
 export interface ExecutionResult {
@@ -42,7 +57,9 @@ export interface ExecutionResult {
   timedOut: boolean
 }
 
-export type OutputCallback = (data: { type: 'stdout' | 'stderr'; text: string }) => void
+export type OutputCallback = (
+  data: { type: 'stdout' | 'stderr'; text: string }
+) => void
 
 // ---------------------------------------------------------------------------
 // State
@@ -53,10 +70,12 @@ interface RunningProcess {
   process: ChildProcess
   startTime: number
   cancelled: boolean
+  timeoutId?: ReturnType<typeof setTimeout>
 }
 
 const runningProcesses: Map<string, RunningProcess> = new Map()
 const sandboxDirs: Set<string> = new Set()
+const tempDirs: Set<string> = new Set()
 
 // ---------------------------------------------------------------------------
 // Internal helpers
@@ -68,12 +87,57 @@ const sandboxDirs: Set<string> = new Set()
 async function isDockerAvailable(): Promise<boolean> {
   return new Promise((resolve) => {
     const proc = spawn('docker', ['info'], {
-      stdio: ['ignore', 'ignore', 'ignore'],
-      timeout: 5000
+      stdio: ['ignore', 'ignore', 'ignore']
     })
-    proc.on('exit', (code) => resolve(code === 0))
-    proc.on('error', () => resolve(false))
+    const timer = setTimeout(() => {
+      proc.kill('SIGTERM')
+      resolve(false)
+    }, 5000)
+
+    proc.on('exit', (code) => {
+      clearTimeout(timer)
+      resolve(code === 0)
+    })
+    proc.on('error', () => {
+      clearTimeout(timer)
+      resolve(false)
+    })
   })
+}
+
+/**
+ * Create a timeout handler that kills the process if it exceeds the limit.
+ */
+function setupTimeout(
+  running: RunningProcess,
+  timeoutMs: number,
+  resolve: (result: ExecutionResult) => void,
+  buildResult: () => ExecutionResult
+): void {
+  if (timeoutMs <= 0) return
+
+  const timeoutId = setTimeout(() => {
+    try {
+      running.process.kill('SIGTERM')
+    } catch {
+      // Process may have already exited
+    }
+
+    // Force kill after grace period
+    setTimeout(() => {
+      try {
+        running.process.kill('SIGKILL')
+      } catch {
+        // Already dead
+      }
+    }, SIGKILL_GRACE_MS)
+
+    // Resolve with timeout result
+    runningProcesses.delete(running.id)
+    resolve(buildResult())
+  }, timeoutMs)
+
+  running.timeoutId = timeoutId
 }
 
 /**
@@ -87,25 +151,34 @@ async function executeInDocker(
 ): Promise<ExecutionResult> {
   const id = randomUUID()
   const image = options.dockerImage ?? 'ubuntu:22.04'
-  const timeout = options.timeout ?? 300_000
+  const timeout = options.timeout ?? DEFAULT_TIMEOUT
   const startTime = Date.now()
+  let timedOut = false
 
   return new Promise((resolve) => {
     const containerName = `openjuliet-sandbox-${id.slice(0, 8)}`
 
-    // Mount the working directory into the container
-    const proc = spawn('docker', [
-      'run',
-      '--rm',
-      '--name', containerName,
-      '-v', `${cwd}:/workspace`,
-      '-w', '/workspace',
-      image,
-      'sh', '-c', cmd
-    ], {
-      timeout,
-      env: { ...process.env, ...options.env }
-    })
+    const proc = spawn(
+      'docker',
+      [
+        'run',
+        '--rm',
+        '--name',
+        containerName,
+        '-v',
+        `${cwd}:/workspace`,
+        '-w',
+        '/workspace',
+        image,
+        'sh',
+        '-c',
+        cmd
+      ],
+      {
+        timeout,
+        env: { ...process.env, ...options.env }
+      }
+    )
 
     let stdout = ''
     let stderr = ''
@@ -130,8 +203,21 @@ async function executeInDocker(
     }
     runningProcesses.set(id, running)
 
+    const buildResult = (): ExecutionResult => ({
+      id,
+      exitCode: null,
+      stdout,
+      stderr,
+      duration: Date.now() - startTime,
+      cancelled: running.cancelled,
+      timedOut
+    })
+
+    setupTimeout(running, timeout, resolve, buildResult)
+
     proc.on('close', (code) => {
       runningProcesses.delete(id)
+      if (running.timeoutId) clearTimeout(running.timeoutId)
       const duration = Date.now() - startTime
       resolve({
         id,
@@ -146,6 +232,7 @@ async function executeInDocker(
 
     proc.on('error', (err) => {
       runningProcesses.delete(id)
+      if (running.timeoutId) clearTimeout(running.timeoutId)
       stderr += `[sandbox] Process error: ${err.message}\n`
       const duration = Date.now() - startTime
       resolve({
@@ -171,8 +258,9 @@ function executeDirect(
   onOutput?: OutputCallback
 ): Promise<ExecutionResult> {
   const id = randomUUID()
-  const timeout = options.timeout ?? 300_000
+  const timeout = options.timeout ?? DEFAULT_TIMEOUT
   const startTime = Date.now()
+  let timedOut = false
 
   return new Promise((resolve) => {
     const proc = spawn('sh', ['-c', cmd], {
@@ -205,8 +293,21 @@ function executeDirect(
     }
     runningProcesses.set(id, running)
 
+    const buildResult = (): ExecutionResult => ({
+      id,
+      exitCode: null,
+      stdout,
+      stderr,
+      duration: Date.now() - startTime,
+      cancelled: running.cancelled,
+      timedOut
+    })
+
+    setupTimeout(running, timeout, resolve, buildResult)
+
     proc.on('close', (code) => {
       runningProcesses.delete(id)
+      if (running.timeoutId) clearTimeout(running.timeoutId)
       const duration = Date.now() - startTime
       resolve({
         id,
@@ -215,12 +316,13 @@ function executeDirect(
         stderr,
         duration,
         cancelled: running.cancelled,
-        timedOut: code === null && (Date.now() - startTime) >= timeout
+        timedOut: code === null && duration >= timeout
       })
     })
 
     proc.on('error', (err) => {
       runningProcesses.delete(id)
+      if (running.timeoutId) clearTimeout(running.timeoutId)
       stderr += `[sandbox] Process error: ${err.message}\n`
       const duration = Date.now() - startTime
       resolve({
@@ -259,6 +361,26 @@ export async function createSandbox(
 }
 
 /**
+ * Create a temporary sandbox directory with a random name.
+ * The directory is automatically tracked for cleanup.
+ *
+ * @param prefix - Optional prefix for the temp directory name.
+ * @returns The path to the created temp sandbox directory.
+ */
+export async function createTempSandbox(
+  prefix = 'exec'
+): Promise<string> {
+  const tempDir = path.join(
+    os.tmpdir(),
+    `${TEMP_PREFIX}${prefix}-${randomUUID().slice(0, 8)}`
+  )
+  await fs.mkdir(tempDir, { recursive: true })
+  sandboxDirs.add(tempDir)
+  tempDirs.add(tempDir)
+  return tempDir
+}
+
+/**
  * Execute a shell command inside the sandbox.
  *
  * If the sandbox was configured with `useDocker: true`, the command runs
@@ -284,17 +406,20 @@ export async function executeCommand(
 
   const opts: SandboxOptions = {
     dir: resolvedCwd,
-    timeout: options?.timeout ?? 300_000,
+    timeout: options?.timeout ?? DEFAULT_TIMEOUT,
     env: options?.env,
     useDocker: options?.useDocker ?? false,
-    dockerImage: options?.dockerImage
+    dockerImage: options?.dockerImage,
+    autoClean: options?.autoClean ?? false
   }
 
   if (opts.useDocker) {
     const dockerAvailable = await isDockerAvailable()
     if (!dockerAvailable) {
       // Fall back to direct execution with a warning
-      console.warn('[sandbox] Docker not available, falling back to direct execution')
+      console.warn(
+        '[sandbox] Docker not available, falling back to direct execution'
+      )
       return executeDirect(cmd, resolvedCwd, opts, onOutput)
     }
     return executeInDocker(cmd, resolvedCwd, opts, onOutput)
@@ -318,17 +443,27 @@ export async function cancelExecution(id: string): Promise<void> {
 
   running.cancelled = true
 
-  // Sends SIGTERM on POSIX, or terminates on Windows
-  running.process.kill('SIGTERM')
+  // Clear timeout if set
+  if (running.timeoutId) {
+    clearTimeout(running.timeoutId)
+    delete running.timeoutId
+  }
 
-  // Force kill after 3 seconds if still alive
+  // Sends SIGTERM on POSIX, or terminates on Windows
+  try {
+    running.process.kill('SIGTERM')
+  } catch {
+    // Process already exited
+  }
+
+  // Force kill after grace period if still alive
   setTimeout(() => {
     try {
       running.process.kill('SIGKILL')
     } catch {
       // Process already exited
     }
-  }, 3000)
+  }, SIGKILL_GRACE_MS)
 }
 
 /**
@@ -369,7 +504,7 @@ export async function cancelAll(): Promise<void> {
 
 /**
  * Destroy the sandbox by cleaning up all running processes.
- * Optionally removes the sandbox directory.
+ * Optionally removes the sandbox directory and any tracked temp dirs.
  *
  * @param dir       - The sandbox directory.
  * @param removeDir - Whether to delete the directory (default: false).
@@ -380,10 +515,13 @@ export async function destroySandbox(
 ): Promise<void> {
   const sandboxPath = path.resolve(dir)
   sandboxDirs.delete(sandboxPath)
+  tempDirs.delete(sandboxPath)
 
   // Cancel any processes running in this directory
   Array.from(runningProcesses.entries()).forEach(([id, running]) => {
-    if (running.process.spawnargs?.includes(sandboxPath)) {
+    const args = running.process.spawnargs ?? []
+    const cwdIndex = args.indexOf(sandboxPath)
+    if (cwdIndex >= 0 || args.some((a) => a.includes(sandboxPath))) {
       cancelExecution(id)
     }
   })
@@ -391,4 +529,44 @@ export async function destroySandbox(
   if (removeDir) {
     await fs.rm(sandboxPath, { recursive: true, force: true })
   }
+}
+
+/**
+ * Destroy all tracked sandbox directories.
+ * Cleans up temp directories and cancels all running processes.
+ *
+ * @param removeDirs - Whether to delete the directories (default: true).
+ */
+export async function destroyAll(removeDirs = true): Promise<void> {
+  // Cancel all running processes
+  await cancelAll()
+
+  // Remove all tracked directories
+  if (removeDirs) {
+    const allDirs = new Set([...sandboxDirs, ...tempDirs])
+    for (const dir of allDirs) {
+      try {
+        await fs.rm(dir, { recursive: true, force: true })
+      } catch {
+        // Directory may already be gone
+      }
+    }
+  }
+
+  sandboxDirs.clear()
+  tempDirs.clear()
+}
+
+/**
+ * Get a list of all active sandbox directories.
+ */
+export function listSandboxDirs(): string[] {
+  return Array.from(sandboxDirs)
+}
+
+/**
+ * Get the count of currently running processes.
+ */
+export function runningCount(): number {
+  return runningProcesses.size
 }
