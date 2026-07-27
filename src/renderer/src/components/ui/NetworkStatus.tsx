@@ -36,7 +36,7 @@ export function NetworkStatus({
   className,
   onConnectivityChange
 }: NetworkStatusProps): JSX.Element {
-  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine)
+  const [isOnline, setIsOnline] = useState<boolean>(() => navigator.onLine)
   const [wasOffline, setWasOffline] = useState(false)
   const [showReconnectAnimation, setShowReconnectAnimation] = useState(false)
 
@@ -63,16 +63,11 @@ export function NetworkStatus({
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
 
-    // Initial check
-    if (navigator.onLine !== isOnline) {
-      setIsOnline(navigator.onLine)
-    }
-
     return () => {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
     }
-  }, [handleOnline, handleOffline, isOnline])
+  }, [handleOnline, handleOffline])
 
   // Subtle indicator mode — just a small dot/icon
   if (subtle) {

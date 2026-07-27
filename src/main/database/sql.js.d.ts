@@ -1,8 +1,9 @@
 /**
- * Type declarations for sql.js
+ * Minimal type declarations for sql.js
  *
- * sql.js ships a WASM bundle without bundled TS types.
- * This minimal declaration file provides the types needed by OpenJuliet.
+ * sql.js does not ship its own type declarations.
+ * This shim provides basic type coverage for the APIs
+ * used by the OpenJuliet database module.
  */
 declare module 'sql.js' {
   interface SqlJsStatic {
@@ -19,6 +20,7 @@ declare module 'sql.js' {
     step(): boolean
     getAsObject(): Record<string, unknown>
     free(): boolean
+    reset(): void
   }
 
   interface Database {
@@ -30,7 +32,10 @@ declare module 'sql.js' {
     close(): void
   }
 
-  export default function initSqlJs(config?: {
-    locateFile?: (file: string) => string
-  }): Promise<SqlJsStatic>
+  export { Database }
+  export { Database as SqlJsDatabase }
+
+  export default function initSqlJs(
+    config?: Record<string, unknown>
+  ): Promise<SqlJsStatic>
 }

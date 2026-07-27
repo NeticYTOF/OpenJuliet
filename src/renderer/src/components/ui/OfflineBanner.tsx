@@ -37,7 +37,7 @@ export function OfflineBanner({
   onOnline,
   onOffline
 }: OfflineBannerProps): JSX.Element {
-  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine)
+  const [isOnline, setIsOnline] = useState<boolean>(() => navigator.onLine)
   const [showReconnected, setShowReconnected] = useState(false)
 
   const handleOnline = useCallback((): void => {
@@ -57,16 +57,11 @@ export function OfflineBanner({
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
 
-    // Sync with current state on mount
-    if (navigator.onLine !== isOnline) {
-      setIsOnline(navigator.onLine)
-    }
-
     return () => {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleOnline, handleOffline])
   }, [handleOnline, handleOffline])
 
   const handleRetry = useCallback((): void => {

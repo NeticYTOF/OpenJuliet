@@ -281,7 +281,6 @@ function StackCollapsible({
   content: string
 }): JSX.Element {
   const lines = content.split('\n')
-  const preview = lines.slice(0, 3).join('\n')
   const isLong = lines.length > 3
 
   return (
