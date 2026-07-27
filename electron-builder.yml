@@ -1,0 +1,68 @@
+appId: com.openjuliet.app
+productName: OpenJuliet
+copyright: Copyright © 2025 NeticYTOF
+directories:
+  buildResources: resources
+  output: release
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+  icon: resources/icon.png
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: OpenJuliet
+  installerIcon: resources/icon.ico
+  uninstallerIcon: resources/icon.ico
+  installerHeaderIcon: resources/icon.ico
+  include: build/installer.nsh
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: resources/icon.icns
+  category: public.app-category.developer-tools
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  notarize: false
+
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}
+  title: OpenJuliet
+  icon: resources/icon.icns
+  iconSize: 128
+  background: null
+  window:
+    width: 540
+    height: 380
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+        - arm64
+    - target: deb
+      arch:
+        - x64
+  icon: resources/icon.png
+  category: Development
+  maintainer: NeticYTOF
+
+fileAssociations:
+  - ext: gitignore
+    name: Gitignore
+    description: Git ignore file
+  - ext: md
+    name: Markdown
+    description: Markdown document

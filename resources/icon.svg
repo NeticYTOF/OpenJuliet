@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#0f0f13"/>
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c4b5fd" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="24" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="48" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bgGrad)" rx="224"/>
+
+  <!-- Outer glow aura -->
+  <circle cx="512" cy="420" r="280" fill="url(#glowGrad)" filter="url(#softGlow)"/>
+
+  <!-- Star body - five-pointed star -->
+  <g filter="url(#glow)" transform="translate(512, 380)">
+    <!-- Main star shape -->
+    <path d="M0,-160 L37.8,-54.4 L148.6,-49.4 L61.2,18.4 L93.8,124.8 L0,65.6 L-93.8,124.8 L-61.2,18.4 L-148.6,-49.4 L-37.8,-54.4 Z"
+          fill="url(#starGrad)"/>
+
+    <!-- Inner highlight -->
+    <path d="M0,-100 L23.6,-34 L92.8,-30.9 L38.2,11.5 L58.6,78 L0,41 L-58.6,78 L-38.2,11.5 L-92.8,-30.9 L-23.6,-34 Z"
+          fill="#c4b5fd" opacity="0.3"/>
+  </g>
+
+  <!-- Juliet silhouette / profile suggestion -->
+  <g transform="translate(512, 620)" opacity="0.15">
+    <ellipse cx="0" cy="-30" rx="32" ry="38" fill="#a78bfa"/>
+    <path d="M-40,10 Q-45,50 -30,80 L-50,100 L-10,95 L0,85 L10,95 L50,100 L30,80 Q45,50 40,10"
+          fill="#a78bfa"/>
+  </g>
+
+  <!-- Orbiting dots (stars in a ring) -->
+  <g transform="translate(512, 380)" opacity="0.6">
+    <circle cx="0" cy="-190" r="4" fill="#c4b5fd"/>
+    <circle cx="134" cy="-134" r="3" fill="#a78bfa"/>
+    <circle cx="190" cy="0" r="4" fill="#c4b5fd"/>
+    <circle cx="134" cy="134" r="3" fill="#8b5cf6"/>
+    <circle cx="0" cy="190" r="4" fill="#a78bfa"/>
+    <circle cx="-134" cy="134" r="3" fill="#c4b5fd"/>
+    <circle cx="-190" cy="0" r="4" fill="#8b5cf6"/>
+    <circle cx="-134" cy="-134" r="3" fill="#a78bfa"/>
+  </g>
+
+  <!-- Small sparkle dots -->
+  <g opacity="0.3">
+    <circle cx="200" cy="200" r="2.5" fill="#a78bfa"/>
+    <circle cx="800" cy="180" r="2" fill="#c4b5fd"/>
+    <circle cx="180" cy="750" r="2" fill="#8b5cf6"/>
+    <circle cx="850" cy="700" r="2.5" fill="#a78bfa"/>
+    <circle cx="300" cy="850" r="1.5" fill="#c4b5fd"/>
+    <circle cx="720" cy="850" r="1.5" fill="#8b5cf6"/>
+    <circle cx="400" cy="150" r="1.5" fill="#a78bfa"/>
+    <circle cx="650" cy="160" r="2" fill="#c4b5fd"/>
+  </g>
+</svg>
