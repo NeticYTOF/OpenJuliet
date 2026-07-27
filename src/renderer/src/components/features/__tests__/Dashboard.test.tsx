@@ -27,6 +27,7 @@ vi.mock('framer-motion', () => ({
 vi.mock('lucide-react', () => {
   const MockIcon = () => <span data-testid="mock-icon" />
   return {
+    Sparkles: MockIcon,
     GitBranch: MockIcon,
     ListChecks: MockIcon,
     Clock: MockIcon,

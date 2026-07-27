@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, cleanup, setupBrowserMocks } from '../../test-utils'
+import { render, screen, cleanup, fireEvent, setupBrowserMocks } from '../../test-utils'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
 import WelcomeScreen from '../features/WelcomeScreen'
@@ -110,21 +110,21 @@ describe('WelcomeScreen', () => {
   it('navigates to github step when Get Started is clicked', () => {
     render(<WelcomeScreen />)
     const getStarted = screen.getByText('Get Started')
-    getStarted.click()
+    fireEvent.click(getStarted)
     expect(screen.getByText('Connect GitHub')).toBeInTheDocument()
   })
 
   it('completes onboarding when Skip is clicked', () => {
     render(<WelcomeScreen />)
     const skipButton = screen.getByText("Skip setup — I'll configure later")
-    skipButton.click()
+    fireEvent.click(skipButton)
     expect(useAppStore.getState().hasCompletedOnboarding).toBe(true)
   })
 
   it('shows StepIndicator after navigating to github step', () => {
     render(<WelcomeScreen />)
     const getStarted = screen.getByText('Get Started')
-    getStarted.click()
+    fireEvent.click(getStarted)
     // Step indicator should be visible
     expect(screen.getByLabelText('Setup progress')).toBeInTheDocument()
   })
@@ -132,51 +132,51 @@ describe('WelcomeScreen', () => {
   it('can navigate back from github to welcome step', () => {
     render(<WelcomeScreen />)
     // Go to github step
-    screen.getByText('Get Started').click()
+    fireEvent.click(screen.getByText('Get Started'))
     expect(screen.getByText('Connect GitHub')).toBeInTheDocument()
 
     // Go back
     const backButton = screen.getByText('Back')
-    backButton.click()
+    fireEvent.click(backButton)
     expect(screen.getByText(/Welcome to/i)).toBeInTheDocument()
   })
 
   it('shows workspace step after continuing from github', () => {
     render(<WelcomeScreen />)
-    screen.getByText('Get Started').click()
+    fireEvent.click(screen.getByText('Get Started'))
     // Click Continue/Skip on github step
     const skipBtn = screen.getByText('Skip')
-    skipBtn.click()
+    fireEvent.click(skipBtn)
     expect(screen.getByText('Select Workspace')).toBeInTheDocument()
   })
 
   it('shows provider step after continuing from workspace', () => {
     render(<WelcomeScreen />)
-    screen.getByText('Get Started').click()
-    screen.getByText('Skip').click()
-    screen.getByText('Continue').click()
+    fireEvent.click(screen.getByText('Get Started'))
+    fireEvent.click(screen.getByText('Skip'))
+    fireEvent.click(screen.getByText('Continue'))
     expect(screen.getByText('Choose AI Provider')).toBeInTheDocument()
   })
 
   it('can navigate back through all steps correctly', () => {
     render(<WelcomeScreen />)
     // Go to provider step
-    screen.getByText('Get Started').click()
-    screen.getByText('Skip').click()
-    screen.getByText('Continue').click()
+    fireEvent.click(screen.getByText('Get Started'))
+    fireEvent.click(screen.getByText('Skip'))
+    fireEvent.click(screen.getByText('Continue'))
     expect(screen.getByText('Choose AI Provider')).toBeInTheDocument()
 
     // Back to workspace
     const backButtons = screen.getAllByText('Back')
-    backButtons[backButtons.length - 1].click()
+    fireEvent.click(backButtons[backButtons.length - 1])
     expect(screen.getByText('Select Workspace')).toBeInTheDocument()
   })
 
   it('renders AI provider presets on the provider step', () => {
     render(<WelcomeScreen />)
-    screen.getByText('Get Started').click()
-    screen.getByText('Skip').click()
-    screen.getByText('Continue').click()
+    fireEvent.click(screen.getByText('Get Started'))
+    fireEvent.click(screen.getByText('Skip'))
+    fireEvent.click(screen.getByText('Continue'))
     expect(screen.getByText('OpenAI')).toBeInTheDocument()
     expect(screen.getByText('Anthropic')).toBeInTheDocument()
     expect(screen.getByText('Google AI')).toBeInTheDocument()

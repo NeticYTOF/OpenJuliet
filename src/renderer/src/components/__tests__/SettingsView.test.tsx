@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, cleanup, setupBrowserMocks } from '../../test-utils'
+import { render, screen, cleanup, fireEvent, setupBrowserMocks } from '../../test-utils'
 import { useSettingsStore } from '../../stores/settingsStore'
 import SettingsView from '../features/SettingsView'
 
@@ -41,8 +41,58 @@ vi.mock('lucide-react', () => {
     FolderOpen: MockIcon,
     Clock: MockIcon,
     Shield: MockIcon,
-    Loader2: MockIcon
+    Loader2: MockIcon,
+    BookOpen: MockIcon
   }
+})
+
+// ──── Mock @radix-ui/react-tabs ────
+// Radix Tabs doesn't work well in jsdom with React 19's event delegation.
+// We provide a lightweight mock that supports controlled tab switching.
+vi.mock('@radix-ui/react-tabs', () => {
+  const ReactMock = require('react')
+  const { createContext, useContext, useState, useCallback } = ReactMock
+
+  const TabsContext = createContext<{
+    value: string
+    onValueChange: (v: string) => void
+  }>({ value: '', onValueChange: () => {} })
+
+  const Root = ({ children, value, onValueChange, ...props }: Record<string, unknown>) => {
+    return (
+      <TabsContext.Provider value={{ value: value as string, onValueChange: onValueChange as (v: string) => void }}>
+        <div data-orientation={props.orientation} {...props}>{children}</div>
+      </TabsContext.Provider>
+    )
+  }
+
+  const List = ({ children, ...props }: Record<string, unknown>) => {
+    return <div role="tablist" {...props}>{children}</div>
+  }
+
+  const Trigger = ({ children, value, ...props }: Record<string, unknown>) => {
+    const ctx = useContext(TabsContext)
+    const isActive = ctx.value === value
+    return (
+      <button
+        role="tab"
+        data-state={isActive ? 'active' : 'inactive'}
+        aria-selected={isActive}
+        onClick={() => ctx.onValueChange(value as string)}
+        {...props}
+      >
+        {children}
+      </button>
+    )
+  }
+
+  const Content = ({ children, value: tabValue, ...props }: Record<string, unknown>) => {
+    const ctx = useContext(TabsContext)
+    if (ctx.value !== tabValue) return null
+    return <div role="tabpanel" {...props}>{children}</div>
+  }
+
+  return { Root, List, Trigger, Content }
 })
 
 describe('SettingsView', () => {
@@ -110,7 +160,7 @@ describe('SettingsView', () => {
   it('switches to Providers tab when clicked', () => {
     render(<SettingsView />)
     const providersTab = screen.getByText('Providers')
-    providersTab.click()
+    fireEvent.click(providersTab)
 
     // The Providers tab content should now be visible
     expect(screen.getByText('AI Providers')).toBeInTheDocument()
@@ -119,7 +169,7 @@ describe('SettingsView', () => {
   it('switches to GitHub tab when clicked', () => {
     render(<SettingsView />)
     const githubTab = screen.getByText('GitHub')
-    githubTab.click()
+    fireEvent.click(githubTab)
 
     expect(screen.getByText('GitHub Authentication')).toBeInTheDocument()
   })
@@ -127,7 +177,7 @@ describe('SettingsView', () => {
   it('switches to Execution tab when clicked', () => {
     render(<SettingsView />)
     const execTab = screen.getByText('Execution')
-    execTab.click()
+    fireEvent.click(execTab)
 
     expect(screen.getByText('Execution Settings')).toBeInTheDocument()
     expect(screen.getByText('Sandbox mode')).toBeInTheDocument()
@@ -137,7 +187,7 @@ describe('SettingsView', () => {
   it('switches to Appearance tab when clicked', () => {
     render(<SettingsView />)
     const appearanceTab = screen.getByText('Appearance')
-    appearanceTab.click()
+    fireEvent.click(appearanceTab)
 
     expect(screen.getAllByText('Theme')[0]).toBeInTheDocument()
     expect(screen.getByText('Dark')).toBeInTheDocument()
@@ -148,7 +198,7 @@ describe('SettingsView', () => {
   it('switches to About tab when clicked', () => {
     render(<SettingsView />)
     const aboutTab = screen.getByText('About')
-    aboutTab.click()
+    fireEvent.click(aboutTab)
 
     expect(screen.getByText('OpenJuliet')).toBeInTheDocument()
     expect(screen.getByText('1.0.0')).toBeInTheDocument()
@@ -156,7 +206,7 @@ describe('SettingsView', () => {
 
   it('shows provider presets in Providers tab', () => {
     render(<SettingsView />)
-    screen.getByText('Providers').click()
+    fireEvent.click(screen.getByText('Providers'))
 
     expect(screen.getByText('OpenAI')).toBeInTheDocument()
     expect(screen.getByText('Anthropic')).toBeInTheDocument()
@@ -166,7 +216,7 @@ describe('SettingsView', () => {
 
   it('shows empty provider message when no providers configured', () => {
     render(<SettingsView />)
-    screen.getByText('Providers').click()
+    fireEvent.click(screen.getByText('Providers'))
 
     expect(screen.getByText('No providers configured yet. Add one above.')).toBeInTheDocument()
   })
@@ -177,7 +227,7 @@ describe('SettingsView', () => {
     })
 
     render(<SettingsView />)
-    screen.getByText('GitHub').click()
+    fireEvent.click(screen.getByText('GitHub'))
 
     expect(screen.getByText(/Connected as/)).toBeInTheDocument()
     expect(screen.getByText('Method: PAT')).toBeInTheDocument()

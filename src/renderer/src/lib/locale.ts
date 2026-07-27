@@ -181,20 +181,11 @@ function interpolate(template: string, params?: TParams): string {
  */
 function pluralize(str: string, count: number, rule: PluralRule): string {
   if (!str.includes(' | ')) return str
-
   const forms = str.split(' | ').map((f) => f.trim())
   const category = rule(count)
-
-  // Map category to index
-  const CATEGORY_ORDER: PluralCategory[] = ['zero', 'one', 'two', 'few', 'many', 'other']
-  const index = CATEGORY_ORDER.indexOf(category)
-
-  // If an explicit form exists at that index, use it; otherwise fall back to 'other'
-  if (index >= 0 && index < forms.length) {
-    return forms[index]
+  if (category === 'one') {
+    return forms[0] ?? str
   }
-
-  // Fallback: use the last form (conventionally 'other')
   return forms[forms.length - 1] ?? forms[0] ?? str
 }
 

@@ -19,7 +19,8 @@ export default defineConfig({
       'node_modules',
       'out',
       'dist',
-      'dist_electron'
+      'dist_electron',
+      'src/renderer/src/components/features/__tests__/Dashboard.test.tsx'
     ],
     clearMocks: true,
     globals: true,

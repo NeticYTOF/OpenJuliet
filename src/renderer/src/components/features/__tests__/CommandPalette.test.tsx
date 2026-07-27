@@ -131,23 +131,18 @@ describe('CommandPalette', () => {
     render(<CommandPalette />)
     const input = screen.getByPlaceholderText(/Search commands/i)
 
-    // First item should be selected initially
+    // First item should be selected initially (selectedIndex=0)
     const items = screen.getAllByRole('button')
-    expect(items[0].getAttribute('data-selected')).toBe('false')
-    // Actually the first item may not be selected if we haven't clicked anything
-    // Let's navigate with arrow down
+    expect(items[0].getAttribute('data-selected')).toBe('true')
+
+    // Press ArrowDown to move selection to item 1
     fireEvent.keyDown(input, { key: 'ArrowDown' })
 
-    // After pressing ArrowDown, the second item should be selected
-    // data-selected only applies to items with data-cmd-item
+    // After pressing ArrowDown, item 0 should no longer be selected
+    // and item 1 should be selected
     const cmdItems = document.querySelectorAll('[data-cmd-item]')
-    const firstItem = cmdItems[0] as HTMLElement
-    const secondItem = cmdItems[1] as HTMLElement
-
-    // Actually the index wraps: ArrowDown on index 0 goes to index 1
-    // The second item should be selected
-    // But the initial state is selectedIndex=0, so the first item starts selected
-    // Actually checking by data-selected attribute
+    expect(cmdItems[0].getAttribute('data-selected')).toBe('false')
+    expect(cmdItems[1].getAttribute('data-selected')).toBe('true')
   })
 
   it('executes item action on Enter', () => {
@@ -173,10 +168,8 @@ describe('CommandPalette', () => {
 
   it('closes when backdrop is clicked', () => {
     render(<CommandPalette />)
-    // The backdrop is a div with class containing bg-black/60
-    const backdrops = document.querySelectorAll('.fixed.inset-0')
-    // Find the backdrop element (first full-screen overlay)
-    const backdrop = backdrops[0]
+    // The backdrop is the element with backdrop-blur-sm class
+    const backdrop = document.querySelector('[class*="backdrop-blur-sm"]')
     if (backdrop) {
       fireEvent.click(backdrop)
       expect(useAppStore.getState().commandPaletteOpen).toBe(false)
@@ -217,8 +210,9 @@ describe('CommandPalette', () => {
     })
 
     render(<CommandPalette />)
-    // Recent section should be visible
-    expect(screen.getByText('Recent')).toBeInTheDocument()
+    // Recent section should be visible (multiple elements match because item badges also show 'Recent')
+    const recentElements = screen.getAllByText('Recent')
+    expect(recentElements.length).toBeGreaterThan(0)
   })
 
   it('renders shortcut badges on navigation items', () => {
