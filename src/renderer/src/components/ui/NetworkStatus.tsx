@@ -173,4 +173,4 @@ export function NetworkStatus({
   )
 }
 
-export default NetworkStatus
+

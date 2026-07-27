@@ -513,4 +513,3 @@ export function TimelineView({
   )
 }
 
-export default TimelineView

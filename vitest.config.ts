@@ -1,4 +1,4 @@
-/// <reference types="vitest" />
+/// <reference types='vitest' />
 import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
@@ -14,7 +14,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/renderer/src/test-setup.ts'],
     pool: 'forks',
-    include: ['src/renderer/src/**/__tests__/**/*.test.{ts,tsx}'],
+    include: ['src/**/__tests__/**/*.test.{ts,tsx}'],
+    exclude: ['node_modules', 'out', 'dist', 'dist_electron'],
     clearMocks: true,
     globals: true,
     css: false,
