@@ -18,7 +18,6 @@ import type { LogEntry } from '../../types'
 import { cn } from '../../lib/utils'
 import { Card } from '../ui/Card'
 import { Badge } from '../ui/Badge'
-import { Button } from '../ui/Button'
 import { EmptyState } from '../ui/EmptyState'
 
 // ─── Types ───────────────────────────────────────────────────────────────────

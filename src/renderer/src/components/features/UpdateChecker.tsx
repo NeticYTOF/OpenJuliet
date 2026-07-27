@@ -207,11 +207,10 @@ export function UpdateChecker({
   const checkForUpdates = useCallback(async (): Promise<void> => {
     setState((s) => ({ ...s, checking: true, error: null }))
     try {
-      // The main process auto-updater checks on startup and every 30 min.
-      // For a manual check we rely on the main process's `update:check` IPC handler.
-      // In a full-electron context, the preload bridges `window.api.update.check()`.
-      // For now, we listen for events and display the latest state.
-      setState((s) => ({ ...s, checking: false }))
+      const result = await window.api.update.check()
+      if (!result.success) {
+        setState((s) => ({ ...s, checking: false, error: result.error ?? 'Update check failed' }))
+      }
     } catch {
       setState((s) => ({ ...s, checking: false, error: 'Failed to check for updates' }))
     }
@@ -223,9 +222,7 @@ export function UpdateChecker({
    */
   const downloadUpdate = useCallback(async (): Promise<void> => {
     try {
-      // In production, the preload bridges `window.api.update.download()`
-      // which invokes the main process `update:download` IPC handler.
-      // The main process emits `update:download-progress` events.
+      await window.api.update.download()
     } catch {
       setState((s) => ({ ...s, error: 'Failed to start download' }))
     }
@@ -236,9 +233,7 @@ export function UpdateChecker({
    */
   const installUpdate = useCallback(async (): Promise<void> => {
     try {
-      // In production, the preload bridges `window.api.update.install()`
-      // which invokes the main process `update:install` IPC handler,
-      // which calls autoUpdater.quitAndInstall().
+      await window.api.update.install()
     } catch {
       // Installation will happen on next app quit regardless
     }

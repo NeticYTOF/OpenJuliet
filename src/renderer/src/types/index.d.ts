@@ -195,18 +195,72 @@ export interface SystemStatus {
 
 /* ──── Electron IPC API Types ──── */
 
+/**
+ * GitHub API exposed through the preload bridge.
+ */
+export interface GithubAPI {
+  listRepos: () => Promise<unknown[]>
+  getRepo: (owner: string, repo: string) => Promise<unknown>
+  listIssues: (owner: string, repo: string) => Promise<unknown[]>
+  createPR: (params: Record<string, unknown>) => Promise<unknown>
+  listPRs: (owner: string, repo: string) => Promise<unknown[]>
+  authenticate: (token: string) => Promise<{ success: boolean; login?: string }>
+}
+
+/**
+ * Git API exposed through the preload bridge.
+ */
+export interface GitAPI {
+  clone: (url: string, path: string, options?: Record<string, unknown>) => Promise<unknown>
+  status: (repoPath: string) => Promise<unknown>
+  branch: (repoPath: string) => Promise<{ current: string; branches: string[]; all: string[] }>
+  commit: (repoPath: string, message: string, options?: Record<string, unknown>) => Promise<unknown>
+  push: (repoPath: string, options?: Record<string, unknown>) => Promise<unknown>
+  pull: (repoPath: string, options?: Record<string, unknown>) => Promise<unknown>
+  diff: (repoPath: string, options?: Record<string, unknown>) => Promise<string>
+  log: (repoPath: string, options?: Record<string, unknown>) => Promise<unknown[]>
+}
+
+/**
+ * App-level API exposed through the preload bridge.
+ */
+export interface AppAPI {
+  getVersion: () => Promise<string>
+  getPlatform: () => Promise<string>
+  openExternal: (url: string) => Promise<void>
+}
+
+/**
+ * Updates (auto-updater) API exposed through the preload bridge.
+ */
+export interface UpdateAPI {
+  check: () => Promise<{ success: boolean; data?: unknown; error?: string }>
+  download: () => Promise<{ success: boolean }>
+  install: () => Promise<{ success: boolean }>
+}
+
+/**
+ * Events API — listen to main-process events.
+ */
+export interface EventsAPI {
+  on: (channel: string, callback: (data: unknown) => void) => () => void
+}
+
+/**
+ * The full preload bridge exposed as window.api.
+ */
 export interface ElectronAPI {
-  minimize: () => void
-  maximize: () => void
-  close: () => void
-  isMaximized: () => Promise<boolean>
-  openFile: () => Promise<string | null>
-  openDirectory: () => Promise<string | null>
-  getAppVersion: () => Promise<string>
-  setTitle: (title: string) => void
-  onMenuAction: (callback: (action: string) => void) => void
-  removeMenuActionListener: () => void
-  platform: string
+  github: GithubAPI
+  git: GitAPI
+  execution: Record<string, unknown>
+  provider: Record<string, unknown>
+  workspace: Record<string, unknown>
+  app: AppAPI
+  update: UpdateAPI
+  shell: Record<string, unknown>
+  settings: Record<string, unknown>
+  db: Record<string, unknown>
+  events: EventsAPI
 }
 
 declare global {
