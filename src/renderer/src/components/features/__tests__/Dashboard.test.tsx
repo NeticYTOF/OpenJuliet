@@ -37,7 +37,8 @@ vi.mock('lucide-react', () => {
     Cpu: MockIcon,
     FolderOpen: MockIcon,
     Plus: MockIcon,
-    Settings: MockIcon
+    Settings: MockIcon,
+    Play: MockIcon
   }
 })
 
