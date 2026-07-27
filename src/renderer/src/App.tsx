@@ -3,12 +3,14 @@ import { AnimatePresence } from 'framer-motion'
 import { useAppStore } from './stores/appStore'
 import { useKeyboard } from './hooks/useKeyboard'
 import { MotionConfig } from './components/ui/MotionConfig'
+import { ErrorBoundary } from './components/ui/ErrorBoundary'
 import AppLayout from './components/layout/AppLayout'
 import WelcomeScreen from './components/features/WelcomeScreen'
 
 /**
  * Root application component.
- * Manages global layout, first-launch welcome screen, and keyboard shortcuts.
+ * Manages global layout, first-launch welcome screen, keyboard shortcuts,
+ * and catches rendering errors with ErrorBoundary.
  */
 function App(): JSX.Element {
   const { hasCompletedOnboarding } = useAppStore()
@@ -27,11 +29,13 @@ function App(): JSX.Element {
   }, [])
 
   return (
-    <MotionConfig>
-      <AnimatePresence mode="wait">
-        {!hasCompletedOnboarding ? <WelcomeScreen key="welcome" /> : <AppLayout key="app" />}
-      </AnimatePresence>
-    </MotionConfig>
+    <ErrorBoundary>
+      <MotionConfig>
+        <AnimatePresence mode="wait">
+          {!hasCompletedOnboarding ? <WelcomeScreen key="welcome" /> : <AppLayout key="app" />}
+        </AnimatePresence>
+      </MotionConfig>
+    </ErrorBoundary>
   )
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useCallback, type ReactNode, type MouseEvent } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
@@ -57,7 +57,7 @@ const modalVariants = {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const }
   },
   exit: {
     opacity: 0,
@@ -148,7 +148,7 @@ export function Modal({
   }, [open])
 
   /* Determine which variant set to use */
-  const contentVariants = size === 'fullscreen' ? fullscreenVariants : modalVariants
+  const contentVariants: Variants = size === 'fullscreen' ? fullscreenVariants : modalVariants
 
   return (
     <AnimatePresence>

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: OpenJuliet Community Discord
+    url: https://discord.gg/openjuliet
+    about: Ask questions, discuss features, and get community support.
+  - name: OpenJuliet Documentation
+    url: https://docs.openjuliet.dev
+    about: Check the official documentation for guides and references.
+  - name: Security Issues
+    url: https://github.com/openjuliet/openjuliet/security/policy
+    about: Please report security vulnerabilities here instead of opening a public issue.

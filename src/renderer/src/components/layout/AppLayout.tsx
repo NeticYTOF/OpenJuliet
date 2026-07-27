@@ -5,11 +5,13 @@ import Titlebar from './Titlebar'
 import Sidebar from './Sidebar'
 import MainArea from './MainArea'
 import Toast from '../ui/Toast'
+import { OfflineBanner } from '../ui/OfflineBanner'
 import CommandPalette from '../features/CommandPalette'
 
 /**
  * AppLayout — Root layout component that combines Titlebar, Sidebar, and MainArea.
- * Handles theme initialization, keyboard shortcuts, and resize support.
+ * Handles theme initialization, keyboard shortcuts, resize support,
+ * and network connectivity monitoring.
  */
 export default function AppLayout(): JSX.Element {
   const { theme, sidebarOpen } = useAppStore()
@@ -51,6 +53,9 @@ export default function AppLayout(): JSX.Element {
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[var(--color-bg-primary)]">
       {/* Titlebar */}
       <Titlebar />
+
+      {/* Offline Banner — slides down when connectivity is lost */}
+      <OfflineBanner />
 
       {/* Main Content — Sidebar + MainArea */}
       <div className="flex flex-1 overflow-hidden">

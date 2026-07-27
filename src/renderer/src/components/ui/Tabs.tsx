@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, type ReactNode, type CSSProperties } from 'react'
+import { useState, useRef, useCallback, Children, type ReactNode, type CSSProperties } from 'react'
 import { motion, LayoutGroup } from 'framer-motion'
 import { cn } from '../../lib/utils'
 
@@ -98,13 +98,13 @@ const sizeStyles: Record<TabsSize, { tab: string; label: string; gap: string }> 
 
 const indicatorVariants = {
   initial: { scaleX: 0, opacity: 0 },
-  animate: { scaleX: 1, opacity: 1, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } },
+  animate: { scaleX: 1, opacity: 1, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const } },
   exit: { scaleX: 0, opacity: 0, transition: { duration: 0.15 } }
 }
 
 const indicatorVerticalVariants = {
   initial: { scaleY: 0, opacity: 0 },
-  animate: { scaleY: 1, opacity: 1, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } },
+  animate: { scaleY: 1, opacity: 1, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const } },
   exit: { scaleY: 0, opacity: 0, transition: { duration: 0.15 } }
 }
 
@@ -273,7 +273,7 @@ export function Tabs(props: TabsProps): JSX.Element {
       {/* Content panels */}
       {children && (
         <div className={cn('flex-1 min-h-0', isVertical ? 'ml-0' : 'mt-0')}>
-          {React.Children.toArray(children).map((child, i) => (
+          {Children.toArray(children).map((child, i) => (
             <div
               key={tabs[i]?.value ?? i}
               id={`tabpanel-${tabs[i]?.value ?? i}`}

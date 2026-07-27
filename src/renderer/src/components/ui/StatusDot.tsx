@@ -36,7 +36,7 @@ const sizeStyles: Record<string, string> = {
 /**
  * Pulse animation variants per status.
  */
-const pulseVariants = {
+const pulseVariants: Record<StatusState, TargetAndTransition> = {
   connected: {
     scale: [1, 1.4, 1],
     opacity: [1, 0.7, 1],
