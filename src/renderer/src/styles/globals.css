@@ -188,6 +188,93 @@ pre,
   }
 }
 
+/* ── New: scale-bounce ── */
+@keyframes scale-bounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ── New: rotate ── */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── New: float ── */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* ── New: glow-pulse ── */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 8px var(--color-accent-glow), 0 0 16px rgba(108, 92, 231, 0.1);
+    opacity: 0.8;
+  }
+  50% {
+    box-shadow: 0 0 24px var(--color-accent-glow), 0 0 48px rgba(108, 92, 231, 0.2);
+    opacity: 1;
+  }
+}
+
+/* ── New: twinkle ── */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* ── New: slideInRight ── */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ── New: slideInLeft ── */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .animate-shimmer {
   animation: shimmer 2s infinite linear;
   background-size: 200% 100%;
@@ -199,6 +286,34 @@ pre,
 
 .animate-slideUp {
   animation: slideUp 0.3s var(--ease-out);
+}
+
+.animate-scale-bounce {
+  animation: scale-bounce 0.5s var(--ease-out);
+}
+
+.animate-rotate {
+  animation: rotate 2s linear infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.3s var(--ease-out);
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.3s var(--ease-out);
 }
 
 /* ========================================================================
@@ -230,6 +345,99 @@ pre,
   background-clip: text;
 }
 
+/* ── New: text-gradient variants ── */
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-success {
+  background: linear-gradient(135deg, var(--color-success), #00e6a0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-warm {
+  background: linear-gradient(135deg, var(--color-warning), var(--color-error));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-cool {
+  background: linear-gradient(135deg, var(--color-info), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── New: glow-border ── */
+.glow-border {
+  border: 1px solid var(--color-accent);
+  box-shadow: 0 0 12px var(--color-accent-glow), inset 0 0 12px rgba(108, 92, 231, 0.05);
+}
+
+.glow-border-success {
+  border: 1px solid var(--color-success);
+  box-shadow: 0 0 12px rgba(0, 214, 143, 0.3), inset 0 0 12px rgba(0, 214, 143, 0.05);
+}
+
+.glow-border-error {
+  border: 1px solid var(--color-error);
+  box-shadow: 0 0 12px rgba(255, 71, 87, 0.3), inset 0 0 12px rgba(255, 71, 87, 0.05);
+}
+
+/* ── New: noise-bg ── */
+.noise-bg {
+  position: relative;
+}
+
+.noise-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── New: stars-bg for particle backgrounds ── */
+.stars-bg {
+  position: relative;
+}
+
+.stars-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── New: card-hover ── */
+.card-hover {
+  transition: all 0.3s var(--ease-out);
+}
+
+.card-hover:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 20px var(--color-accent-glow);
+  transform: translateY(-2px);
+}
+
+/* ── New: text-truncate ── */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ========================================================================
    Selection
    ======================================================================== */
@@ -237,6 +445,13 @@ pre,
 ::selection {
   background: var(--color-accent-subtle);
   color: var(--color-text-primary);
+}
+
+/* Improve selection for code/monospace */
+code::selection,
+pre::selection,
+.monospace::selection {
+  background: rgba(108, 92, 231, 0.25);
 }
 
 /* ========================================================================
@@ -251,6 +466,34 @@ pre,
 /* Remove default focus for mouse clicks */
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/* Enhanced focus ring for interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+  transition: outline-color 0.15s ease;
+}
+
+/* ========================================================================
+   Theme Change Transitions
+   ======================================================================== */
+
+/* Smooth transitions when theme changes */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease !important;
 }
 
 /* ========================================================================

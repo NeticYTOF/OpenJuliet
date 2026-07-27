@@ -85,13 +85,14 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
     }))
 
     // Also notify the main process via IPC if available
-    if (typeof window !== 'undefined' && window.api?.execution?.run) {
-      window.api.execution
+    const api = (window as any).api
+    if (api?.execution?.run) {
+      api.execution
         .run({
           command: taskData.title,
-          projectId: taskData.id
+          projectId: id
         })
-        .catch((err) => {
+        .catch((err: Error) => {
           console.error('[executionStore] Failed to notify main process:', err)
         })
     }
@@ -120,8 +121,9 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
           : null
 
       // Notify main process via IPC
-      if (typeof window !== 'undefined' && window.api?.execution?.cancel) {
-        window.api.execution.cancel(taskId).catch(() => {})
+      const api = typeof window !== 'undefined' ? (window as any).api : null
+      if (api?.execution?.cancel) {
+        api.execution.cancel(taskId).catch(() => {})
       }
 
       return {
@@ -217,43 +219,36 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
   initIPCListeners: () => {
     const unsubs: (() => void)[] = []
     const { handleProgressEvent, handleLogEvent, handleCompleteEvent } = get()
+    const api = typeof window !== 'undefined' ? (window as any).api : null
 
-    if (
-      typeof window !== 'undefined' &&
-      window.api?.execution
-    ) {
+    if (api?.execution) {
       // Attach to preload bridge listeners
-      if (window.api.execution.onProgress) {
-        unsubs.push(window.api.execution.onProgress(handleProgressEvent))
+      if (api.execution.onProgress) {
+        unsubs.push(api.execution.onProgress(handleProgressEvent))
       }
-      if (window.api.execution.onLog) {
-        unsubs.push(window.api.execution.onLog(handleLogEvent))
+      if (api.execution.onLog) {
+        unsubs.push(api.execution.onLog(handleLogEvent))
       }
-      if (window.api.execution.onComplete) {
-        unsubs.push(window.api.execution.onComplete(handleCompleteEvent))
+      if (api.execution.onComplete) {
+        unsubs.push(api.execution.onComplete(handleCompleteEvent))
       }
-    } else {
-      // Fallback: use generic event bus if the execution API is not exposed
-      if (
-        typeof window !== 'undefined' &&
-        window.api?.events?.on
-      ) {
-        unsubs.push(
-          window.api.events.on('execution:progress', (data) => {
-            handleProgressEvent(data as { taskId: string; progress: number; step?: string })
-          })
-        )
-        unsubs.push(
-          window.api.events.on('execution:log', (data) => {
-            handleLogEvent(data as { taskId: string; line: string; stream: 'stdout' | 'stderr' })
-          })
-        )
-        unsubs.push(
-          window.api.events.on('execution:complete', (data) => {
-            handleCompleteEvent(data as { taskId: string; exitCode: number | null; duration: number })
-          })
-        )
-      }
+    } else if (api?.events?.on) {
+      // Fallback: use generic event bus
+      unsubs.push(
+        api.events.on('execution:progress', (data: unknown) => {
+          handleProgressEvent(data as { taskId: string; progress: number; step?: string })
+        })
+      )
+      unsubs.push(
+        api.events.on('execution:log', (data: unknown) => {
+          handleLogEvent(data as { taskId: string; line: string; stream: 'stdout' | 'stderr' })
+        })
+      )
+      unsubs.push(
+        api.events.on('execution:complete', (data: unknown) => {
+          handleCompleteEvent(data as { taskId: string; exitCode: number | null; duration: number })
+        })
+      )
     }
 
     // Return a combined unsubscribe function

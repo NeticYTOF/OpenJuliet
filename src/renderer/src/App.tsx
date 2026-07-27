@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useAppStore } from './stores/appStore'
 import { useKeyboard } from './hooks/useKeyboard'
+import { MotionConfig } from './components/ui/MotionConfig'
 import AppLayout from './components/layout/AppLayout'
 import WelcomeScreen from './components/features/WelcomeScreen'
 
@@ -26,9 +27,11 @@ function App(): JSX.Element {
   }, [])
 
   return (
-    <AnimatePresence mode="wait">
-      {!hasCompletedOnboarding ? <WelcomeScreen key="welcome" /> : <AppLayout key="app" />}
-    </AnimatePresence>
+    <MotionConfig>
+      <AnimatePresence mode="wait">
+        {!hasCompletedOnboarding ? <WelcomeScreen key="welcome" /> : <AppLayout key="app" />}
+      </AnimatePresence>
+    </MotionConfig>
   )
 }
 

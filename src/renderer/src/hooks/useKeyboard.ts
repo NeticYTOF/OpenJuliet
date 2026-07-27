@@ -48,7 +48,7 @@ export function useKeyboard(): void {
       const shortcuts: ShortcutMap = {
         /* Cmd/Ctrl+K — Command palette */
         ...(isMeta && key === 'k'
-          ? { 'cmd+k': () => console.log('Command palette triggered (not yet implemented)') }
+          ? { 'cmd+k': () => useAppStore.getState().toggleCommandPalette() }
           : {}),
 
         /* Cmd/Ctrl+B — Toggle sidebar */

@@ -1,28 +1,31 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, setupBrowserMocks } from '../../test-utils'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, screen, cleanup, setupBrowserMocks } from '../../../test-utils'
+import { useAppStore } from '../../../stores/appStore'
+import { useSettingsStore } from '../../../stores/settingsStore'
 import Dashboard from '../Dashboard'
 
 // ──── Mock framer-motion ────
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => (
-      <div {...props}>{children}</div>
-    ),
-    button: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => (
-      <button {...props}>{children}</button>
-    ),
-    span: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => (
-      <span {...props}>{children}</span>
-    )
+    div: ({ children, ...props }: Record<string, unknown>) => {
+      const { initial, animate, exit, transition, variants, whileHover, whileTap, whileInView, ...safeProps } = props
+      return <div {...safeProps}>{children}</div>
+    },
+    button: ({ children, ...props }: Record<string, unknown>) => {
+      const { whileHover, whileTap, initial, animate, exit, transition, variants, layout, layoutId, ...safeProps } = props
+      return <button {...safeProps}>{children}</button>
+    },
+    span: ({ children, ...props }: Record<string, unknown>) => {
+      const { initial, animate, exit, transition, variants, ...safeProps } = props
+      return <span {...safeProps}>{children}</span>
+    }
   },
   AnimatePresence: ({ children }: { children?: React.ReactNode }) => <>{children}</>
 }))
 
 // ──── Mock lucide-react icons ────
 vi.mock('lucide-react', () => {
-  const MockIcon = ({ 'data-testid': testId }: { 'data-testid'?: string }) => (
-    <span data-testid={testId || 'mock-icon'} />
-  )
+  const MockIcon = () => <span data-testid="mock-icon" />
   return {
     GitBranch: MockIcon,
     ListChecks: MockIcon,
@@ -37,34 +40,39 @@ vi.mock('lucide-react', () => {
   }
 })
 
-// ──── Mock stores ────
-const mockSetView = vi.fn()
-const mockAppStore = {
-  setView: mockSetView,
-  activeView: 'dashboard'
-}
-const mockSettingsStore = {
-  github: { isConnected: false, method: 'none' },
-  providers: [],
-  workspaceDir: ''
-}
-
-vi.mock('../../stores/appStore', () => ({
-  useAppStore: vi.fn((selector?: (state: typeof mockAppStore) => unknown) =>
-    selector ? selector(mockAppStore) : mockAppStore
-  )
-}))
-
-vi.mock('../../stores/settingsStore', () => ({
-  useSettingsStore: vi.fn((selector?: (state: typeof mockSettingsStore) => unknown) =>
-    selector ? selector(mockSettingsStore) : mockSettingsStore
-  )
-}))
-
 describe('Dashboard', () => {
   beforeEach(() => {
     setupBrowserMocks()
-    vi.clearAllMocks()
+    localStorage.clear()
+    useAppStore.setState({
+      activeView: 'dashboard',
+      sidebarOpen: true,
+      theme: 'dark',
+      currentProject: null,
+      currentTask: null,
+      notifications: [],
+      hasCompletedOnboarding: false,
+      isFirstLaunch: true
+    })
+    useSettingsStore.setState({
+      theme: 'dark' as const,
+      workspaceDir: '',
+      fontSize: 14,
+      animationsEnabled: true,
+      sidebarCollapsed: false,
+      concurrency: 2,
+      sandboxEnabled: true,
+      executionTimeout: 300_000,
+      notificationsEnabled: true,
+      gitUser: '',
+      gitEmail: '',
+      providers: [],
+      github: { isConnected: false, method: 'none' }
+    })
+  })
+
+  afterEach(() => {
+    cleanup()
   })
 
   it('renders the welcome heading', () => {
@@ -103,50 +111,46 @@ describe('Dashboard', () => {
   it('renders system status section', () => {
     render(<Dashboard />)
     expect(screen.getByText('System Status')).toBeInTheDocument()
-    expect(screen.getByText('0 active')).toBeInTheDocument() // providers.length
-    expect(screen.getByText('Not set')).toBeInTheDocument() // workspaceDir
+    expect(screen.getByText('0 active')).toBeInTheDocument()
+    expect(screen.getByText('Not set')).toBeInTheDocument()
     expect(screen.getByText('~256 MB')).toBeInTheDocument()
   })
 
   it('calls setView when clone repository button is clicked', () => {
     render(<Dashboard />)
-    const cloneBtn = screen.getByText('Clone Repository')
-    cloneBtn.click()
-    expect(mockSetView).toHaveBeenCalledWith('repositories')
+    const buttons = screen.getAllByRole('button')
+    const cloneBtn = buttons.find((b) => b.textContent === 'Clone Repository')
+    expect(cloneBtn).toBeTruthy()
+    cloneBtn!.click()
+    expect(useAppStore.getState().activeView).toBe('repositories')
   })
 
   it('calls setView when new task button is clicked', () => {
     render(<Dashboard />)
-    screen.getByText('New Task').click()
-    expect(mockSetView).toHaveBeenCalledWith('tasks')
+    const buttons = screen.getAllByRole('button')
+    const taskBtn = buttons.find((b) => b.textContent === 'New Task')
+    expect(taskBtn).toBeTruthy()
+    taskBtn!.click()
+    expect(useAppStore.getState().activeView).toBe('tasks')
   })
 
   it('calls setView when open settings button is clicked', () => {
     render(<Dashboard />)
-    screen.getByText('Open Settings').click()
-    expect(mockSetView).toHaveBeenCalledWith('settings')
+    const buttons = screen.getAllByRole('button')
+    const settingsBtn = buttons.find((b) => b.textContent === 'Open Settings')
+    expect(settingsBtn).toBeTruthy()
+    settingsBtn!.click()
+    expect(useAppStore.getState().activeView).toBe('settings')
   })
 
   it('shows GitHub connected state when connected', () => {
-    // Override the mock settings store for this test
-    const connectedSettings = {
-      github: { isConnected: true, method: 'oauth', username: 'octocat' },
-      providers: [],
-      workspaceDir: ''
-    }
-    vi.mocked(useSettingsStore).mockImplementation(
-      (selector?: (state: typeof connectedSettings) => unknown) =>
-        selector ? selector(connectedSettings) : connectedSettings
-    )
+    useSettingsStore.setState({
+      github: { isConnected: true, method: 'oauth', username: 'octocat' }
+    })
 
     render(<Dashboard />)
     expect(screen.getByText('GitHub Connected')).toBeInTheDocument()
     expect(screen.getByText('@octocat')).toBeInTheDocument()
     expect(screen.getByText('Live')).toBeInTheDocument()
-  })
-
-  // Clean up mock override after tests
-  afterEach(() => {
-    vi.restoreAllMocks()
   })
 })

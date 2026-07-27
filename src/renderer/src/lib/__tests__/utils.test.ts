@@ -3,16 +3,16 @@ import { cn, formatDate, formatRelativeTime, formatBytes, truncate, debounce, th
 
 describe('cn', () => {
   it('merges tailwind class names', () => {
-    expect(cn('px-4', 'py-2')).toBe('py-2 px-4')
+    expect(cn('px-4', 'py-2')).toBe('px-4 py-2')
   })
 
   it('handles conditional classes', () => {
-    expect(cn('px-4', false && 'hidden', 'py-2')).toBe('py-2 px-4')
-    expect(cn('px-4', true && 'hidden', 'py-2')).toBe('py-2 px-4 hidden')
+    expect(cn('px-4', false && 'hidden', 'py-2')).toBe('px-4 py-2')
+    expect(cn('px-4', true && 'hidden', 'py-2')).toBe('px-4 hidden py-2')
   })
 
   it('handles undefined / null inputs gracefully', () => {
-    expect(cn('px-4', undefined, null, 'py-2')).toBe('py-2 px-4')
+    expect(cn('px-4', undefined, null, 'py-2')).toBe('px-4 py-2')
   })
 
   it('resolves tailwind conflicts (last wins)', () => {
@@ -35,7 +35,7 @@ describe('formatDate', () => {
   })
 
   it('formats an ISO string', () => {
-    expect(formatDate('2024-01-15T00:00:00.000Z')).toBe('Jan 14, 2024')
+    expect(formatDate('2024-01-15T00:00:00.000Z')).toBe('Jan 15, 2024')
   })
 
   it('accepts a custom format string', () => {

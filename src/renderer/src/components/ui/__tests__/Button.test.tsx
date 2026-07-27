@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '../../test-utils'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, screen, cleanup } from '../../../test-utils'
 import { Button } from '../Button'
 
 // framer-motion uses browser APIs that aren't available in jsdom
@@ -7,8 +7,8 @@ vi.mock('framer-motion', () => ({
   motion: {
     button: ({
       children,
-      whileHover,
-      whileTap,
+      whileHover: _wH,
+      whileTap: _wT,
       ...props
     }: {
       children?: React.ReactNode
@@ -21,9 +21,8 @@ vi.mock('framer-motion', () => ({
 }))
 
 describe('Button', () => {
-  beforeEach(() => {
-    // Prevent framer-motion mock issues with variants
-    vi.clearAllMocks()
+  afterEach(() => {
+    cleanup()
   })
 
   it('renders children', () => {
@@ -62,15 +61,15 @@ describe('Button', () => {
     expect(btn.className).toContain('border')
   })
 
-  it('applies size classes', () => {
+  it('applies sm size classes', () => {
     render(<Button size="sm">Small</Button>)
-    let btn = screen.getByRole('button')
+    const btn = screen.getByRole('button')
     expect(btn.className).toContain('px-3 py-1.5')
+  })
 
-    // Clean and re-render
-    btn.remove()
+  it('applies lg size classes', () => {
     render(<Button size="lg">Large</Button>)
-    btn = screen.getAllByRole('button')[1]
+    const btn = screen.getByRole('button')
     expect(btn.className).toContain('px-6 py-2.5')
   })
 
@@ -78,7 +77,6 @@ describe('Button', () => {
     render(<Button loading>Loading</Button>)
     const btn = screen.getByRole('button')
     expect(btn).toBeDisabled()
-    // The spinner is rendered
     expect(btn.querySelector('.animate-spin')).toBeTruthy()
   })
 

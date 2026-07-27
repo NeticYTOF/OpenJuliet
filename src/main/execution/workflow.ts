@@ -439,16 +439,9 @@ export async function analyzeRepo(projectPath: string): Promise<RepoAnalysis> {
   }
 
   // Detect language
-  const [hasTsConfig, hasESLint, hasPrettier, hasVitest, hasJest, hasMocha, hasPytest, hasSrcDir] =
+  const [hasTsConfig] =
     await Promise.all([
-      fileExists(projectPath, 'tsconfig.json'),
-      fileExists(projectPath, '.eslintrc') || fileExists(projectPath, '.eslintrc.json') || fileExists(projectPath, '.eslintrc.js') || fileExists(projectPath, 'eslint.config.js'),
-      fileExists(projectPath, '.prettierrc') || fileExists(projectPath, '.prettierrc.json'),
-      fileExists(projectPath, 'vitest.config.ts') || fileExists(projectPath, 'vitest.config.js'),
-      fileExists(projectPath, 'jest.config.js') || fileExists(projectPath, 'jest.config.ts'),
-      fileExists(projectPath, '.mocharc.js') || fileExists(projectPath, '.mocharc.yml'),
-      fileExists(projectPath, 'pytest.ini') || fileExists(projectPath, 'setup.cfg') && dependencies.includes('pytest'),
-      fileExists(projectPath, 'src')
+      fileExists(projectPath, 'tsconfig.json')
     ])
 
   const language = hasTsConfig ? 'TypeScript' : hasPkgJson ? 'JavaScript' : hasPipfile || hasRequirements ? 'Python' : 'Unknown'

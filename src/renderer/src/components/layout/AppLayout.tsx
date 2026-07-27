@@ -5,6 +5,7 @@ import Titlebar from './Titlebar'
 import Sidebar from './Sidebar'
 import MainArea from './MainArea'
 import Toast from '../ui/Toast'
+import CommandPalette from '../features/CommandPalette'
 
 /**
  * AppLayout — Root layout component that combines Titlebar, Sidebar, and MainArea.
@@ -62,6 +63,9 @@ export default function AppLayout(): JSX.Element {
         notifications={notifications}
         onDismiss={dismissNotification}
       />
+
+      {/* Command Palette */}
+      <CommandPalette />
     </div>
   )
 }

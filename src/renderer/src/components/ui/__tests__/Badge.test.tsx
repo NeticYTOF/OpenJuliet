@@ -1,8 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '../../test-utils'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { render, screen, cleanup } from '../../../test-utils'
 import { Badge } from '../Badge'
 
 describe('Badge', () => {
+  afterEach(() => {
+    cleanup()
+  })
+
   it('renders children', () => {
     render(<Badge>Active</Badge>)
     expect(screen.getByText('Active')).toBeInTheDocument()
@@ -44,7 +48,7 @@ describe('Badge', () => {
     expect(badge.className).toContain('bg-[var(--color-accent-subtle)]')
   })
 
-  it('applies size classes', () => {
+  it('applies sm size classes', () => {
     render(<Badge size="sm">Small</Badge>)
     expect(screen.getByText('Small').className).toContain('px-1.5 py-0.5')
   })
@@ -52,8 +56,8 @@ describe('Badge', () => {
   it('renders a dot indicator when dot=true', () => {
     render(<Badge dot>With Dot</Badge>)
     const badge = screen.getByText('With Dot')
-    // The dot is a span before the text
-    const dot = badge.previousElementSibling
+    // The dot is rendered as the first child of the badge span
+    const dot = badge.firstElementChild
     expect(dot).toBeTruthy()
     expect(dot!.className).toContain('rounded-full')
   })
@@ -61,7 +65,11 @@ describe('Badge', () => {
   it('does not render dot when dot=false', () => {
     render(<Badge>No Dot</Badge>)
     const badge = screen.getByText('No Dot')
-    expect(badge.previousElementSibling).toBeNull()
+    // With no dot, text should be the only child (or there may be no child elements)
+    const directChildren = Array.from(badge.children).filter(
+      (child) => child.tagName === 'SPAN'
+    )
+    expect(directChildren).toHaveLength(0)
   })
 
   it('applies custom className', () => {

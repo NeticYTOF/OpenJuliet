@@ -2,6 +2,10 @@
   "name": "openjuliet",
   "version": "1.0.0",
   "description": "OpenJuliet — A beautiful, open-source, local-first autonomous coding agent",
+  "engines": {
+    "electron": ">=28",
+    "node": ">=18"
+  },
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",

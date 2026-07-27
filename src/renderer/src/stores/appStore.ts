@@ -15,6 +15,8 @@ interface AppState {
   notifications: Notification[]
   hasCompletedOnboarding: boolean
   isFirstLaunch: boolean
+  commandPaletteOpen: boolean
+  commandPaletteRecent: string[]
 
   /* ──── Actions ──── */
   toggleSidebar: () => void
@@ -27,6 +29,22 @@ interface AppState {
   dismissNotification: (id: string) => void
   clearNotifications: () => void
   completeOnboarding: () => void
+  setCommandPaletteOpen: (open: boolean) => void
+  toggleCommandPalette: () => void
+  addToCommandPaletteRecent: (id: string) => void
+}
+
+function loadRecent(): string[] {
+  try {
+    const stored = localStorage.getItem('openjuliet:command-recent')
+    return stored ? (JSON.parse(stored) as string[]) : []
+  } catch {
+    return []
+  }
+}
+
+function saveRecent(items: string[]): void {
+  localStorage.setItem('openjuliet:command-recent', JSON.stringify(items.slice(0, 10)))
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -39,6 +57,8 @@ export const useAppStore = create<AppState>((set) => ({
   notifications: [],
   hasCompletedOnboarding: localStorage.getItem('openjuliet:onboarding') === 'true',
   isFirstLaunch: !localStorage.getItem('openjuliet:onboarding'),
+  commandPaletteOpen: false,
+  commandPaletteRecent: loadRecent(),
 
   /* ──── Actions ──── */
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
@@ -82,5 +102,17 @@ export const useAppStore = create<AppState>((set) => ({
   completeOnboarding: () => {
     localStorage.setItem('openjuliet:onboarding', 'true')
     set({ hasCompletedOnboarding: true, isFirstLaunch: false })
-  }
+  },
+
+  setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+
+  toggleCommandPalette: () =>
+    set((state) => ({ commandPaletteOpen: !state.commandPaletteOpen })),
+
+  addToCommandPaletteRecent: (id) =>
+    set((state) => {
+      const updated = [id, ...state.commandPaletteRecent.filter((x) => x !== id)]
+      saveRecent(updated)
+      return { commandPaletteRecent: updated }
+    })
 }))
