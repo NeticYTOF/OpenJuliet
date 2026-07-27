@@ -7,15 +7,15 @@ import Dashboard from '../Dashboard'
 // ──── Mock framer-motion ────
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: Record<string, unknown>) => {
+    div: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
       const { initial, animate, exit, transition, variants, whileHover, whileTap, whileInView, ...safeProps } = props
       return <div {...safeProps}>{children}</div>
     },
-    button: ({ children, ...props }: Record<string, unknown>) => {
+    button: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
       const { whileHover, whileTap, initial, animate, exit, transition, variants, layout, layoutId, ...safeProps } = props
       return <button {...safeProps}>{children}</button>
     },
-    span: ({ children, ...props }: Record<string, unknown>) => {
+    span: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
       const { initial, animate, exit, transition, variants, ...safeProps } = props
       return <span {...safeProps}>{children}</span>
     }

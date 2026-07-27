@@ -19,8 +19,7 @@ export default defineConfig({
       'node_modules',
       'out',
       'dist',
-      'dist_electron',
-      'src/main/__tests__'
+      'dist_electron'
     ],
     clearMocks: true,
     globals: true,

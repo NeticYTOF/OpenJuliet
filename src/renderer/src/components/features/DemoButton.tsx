@@ -87,7 +87,7 @@ export default function DemoButton(): JSX.Element {
   }, [isDemoRunning, setView, addNotification])
 
   return (
-    <Card variant="accent" padding="lg" className="relative overflow-hidden">
+    <Card variant="default" padding="lg" className="relative overflow-hidden border-[var(--color-accent)]/20">
       {/* Decorative background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 via-transparent to-[var(--color-accent-subtle)]/5 pointer-events-none" />
 

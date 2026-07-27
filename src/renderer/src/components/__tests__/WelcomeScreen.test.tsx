@@ -7,19 +7,19 @@ import WelcomeScreen from '../features/WelcomeScreen'
 // ──── Mock framer-motion ────
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: Record<string, unknown>) => {
+    div: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
       const { initial, animate, exit, transition, variants, layout, layoutId, whileHover, whileTap, whileInView, ...safeProps } = props
       return <div {...safeProps}>{children}</div>
     },
-    span: ({ children, ...props }: Record<string, unknown>) => {
+    span: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
       const { initial, animate, exit, transition, variants, ...safeProps } = props
       return <span {...safeProps}>{children}</span>
     },
-    p: ({ children, ...props }: Record<string, unknown>) => {
+    p: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
       const { initial, animate, exit, transition, variants, ...safeProps } = props
       return <p {...safeProps}>{children}</p>
     },
-    button: ({ children, ...props }: Record<string, unknown>) => {
+    button: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
       const { whileHover, whileTap, initial, animate, exit, transition, variants, layout, layoutId, ...safeProps } = props
       return <button {...safeProps}>{children}</button>
     }
