@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { useSettingsStore } from '../../stores/settingsStore'
 import { useAppStore } from '../../stores/appStore'
+import { useWindowSize } from '../../hooks/useWindowSize'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
@@ -42,6 +43,7 @@ const tabStyles = cn(
  */
 export default function SettingsView(): JSX.Element {
   const [activeTab, setActiveTab] = useState('general')
+  const { isSmall } = useWindowSize()
 
   return (
     <AnimatedContainer animation="slideUp">
@@ -55,18 +57,21 @@ export default function SettingsView(): JSX.Element {
 
       <div className="flex gap-6">
         {/* Sidebar tabs */}
-        <Tabs.Root orientation="vertical" value={activeTab} onValueChange={setActiveTab} className="flex gap-6 w-full">
-          <Tabs.List className="flex flex-col gap-1 w-48 shrink-0">
-            <Tabs.Trigger value="general" className={tabStyles}><User size={16} />General</Tabs.Trigger>
-            <Tabs.Trigger value="providers" className={tabStyles}><Cpu size={16} />Providers</Tabs.Trigger>
-            <Tabs.Trigger value="github" className={tabStyles}><Github size={16} />GitHub</Tabs.Trigger>
-            <Tabs.Trigger value="execution" className={tabStyles}><Play size={16} />Execution</Tabs.Trigger>
-            <Tabs.Trigger value="appearance" className={tabStyles}><Palette size={16} />Appearance</Tabs.Trigger>
-            <Tabs.Trigger value="about" className={tabStyles}><Info size={16} />About</Tabs.Trigger>
+        <Tabs.Root orientation={isSmall ? 'horizontal' : 'vertical'} value={activeTab} onValueChange={setActiveTab} className={isSmall ? "w-full" : "flex gap-6 w-full"}>
+          <Tabs.List className={isSmall
+            ? "flex gap-1 mb-6 p-1 bg-[var(--color-bg-tertiary)] rounded-lg overflow-x-auto w-full"
+            : "flex flex-col gap-1 w-48 shrink-0"
+          }>
+            <Tabs.Trigger value="general" className={tabStyles}><User size={16} /><span className="hide-sm">{isSmall ? '' : 'General'}</span></Tabs.Trigger>
+            <Tabs.Trigger value="providers" className={tabStyles}><Cpu size={16} /><span className="hide-sm">{isSmall ? '' : 'Providers'}</span></Tabs.Trigger>
+            <Tabs.Trigger value="github" className={tabStyles}><Github size={16} /><span className="hide-sm">{isSmall ? '' : 'GitHub'}</span></Tabs.Trigger>
+            <Tabs.Trigger value="execution" className={tabStyles}><Play size={16} /><span className="hide-sm">{isSmall ? '' : 'Execution'}</span></Tabs.Trigger>
+            <Tabs.Trigger value="appearance" className={tabStyles}><Palette size={16} /><span className="hide-sm">{isSmall ? '' : 'Appearance'}</span></Tabs.Trigger>
+            <Tabs.Trigger value="about" className={tabStyles}><Info size={16} /><span className="hide-sm">{isSmall ? '' : 'About'}</span></Tabs.Trigger>
           </Tabs.List>
 
           {/* Tab panels */}
-          <div className="flex-1 max-w-2xl">
+          <div className={isSmall ? "w-full" : "flex-1 max-w-2xl"}>
             <Tabs.Content value="general"><GeneralSettings /></Tabs.Content>
             <Tabs.Content value="providers"><ProviderSettings /></Tabs.Content>
             <Tabs.Content value="github"><GitHubSettings /></Tabs.Content>
@@ -230,8 +235,19 @@ function ProviderSettings(): JSX.Element {
             </div>
           ))}
 
-          {providers.length === 0 && (
-            <p className="text-sm text-[var(--color-text-muted)] text-center py-4">No providers configured yet. Add one above.</p>
+          {providers.length === 0 && !showAddForm && (
+            <div className="text-center py-6">
+              <div className="inline-flex p-2 rounded-lg bg-[var(--color-bg-tertiary)] mb-3">
+                <Cpu size={20} className="text-[var(--color-text-muted)]" />
+              </div>
+              <p className="text-sm text-[var(--color-text-secondary)] mb-1">No providers configured yet</p>
+              <p className="text-xs text-[var(--color-text-muted)] mb-4 max-w-xs mx-auto">
+                Add an AI provider from the presets above or create a custom one to start executing tasks.
+              </p>
+              <Button variant="secondary" size="sm" icon={<Plus size={14} />} onClick={() => setShowAddForm(true)}>
+                Add Your First Provider
+              </Button>
+            </div>
           )}
         </Card>
       </AnimatedItem>

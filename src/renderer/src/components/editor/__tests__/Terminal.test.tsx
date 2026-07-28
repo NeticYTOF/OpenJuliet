@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, cleanup, fireEvent, setupBrowserMocks } from '../../../test-utils'
+import { render, screen, cleanup, fireEvent, setupBrowserMocks, act } from '../../../test-utils'
+import React, { Suspense } from 'react'
 import { Terminal } from '../Terminal'
+
+vi.mock('../XtermWrapper', () => ({
+  default: () => <div data-testid="xterm-wrapper">xterm</div>
+}))
 
 // ──── Mock framer-motion ────
 vi.mock('framer-motion', () => ({

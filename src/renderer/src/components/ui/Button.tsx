@@ -76,10 +76,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   return (
     <motion.button
       ref={ref}
-      whileHover={{ scale: disabled || loading ? 1 : 1.02 }}
-      whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
+      whileHover={disabled || loading ? undefined : { scale: 1.02, y: -1 }}
+      whileTap={disabled || loading ? undefined : { scale: 0.98, y: 0 }}
       className={cn(
-        'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]',
+        'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] hover-lift',
         variantStyles[variant],
         sizeStyles[size],
         (disabled || loading) && 'opacity-50 cursor-not-allowed pointer-events-none',

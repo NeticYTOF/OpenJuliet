@@ -63,10 +63,16 @@ export function Toast({ notifications, onDismiss }: ToastProps): JSX.Element {
               asChild
             >
               <motion.div
-                initial={{ opacity: 0, x: 50, scale: 0.95 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 50, scale: 0.95 }}
-                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                layout
+                initial={{ opacity: 0, x: 80, y: 20, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 80, y: -10, scale: 0.9 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 260,
+                  damping: 22,
+                  mass: 0.8
+                }}
                 className={cn(
                   'flex items-start gap-3 p-4 rounded-lg bg-[var(--color-surface)] border shadow-lg',
                   'border-l-4',

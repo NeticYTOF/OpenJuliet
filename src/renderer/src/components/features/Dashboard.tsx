@@ -10,10 +10,13 @@ import {
   FolderOpen,
   Plus,
   Settings,
-  Sparkles
+  Sparkles,
+  Grid3X3,
+  Columns
 } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
+import { useWindowSize } from '../../hooks/useWindowSize'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Badge } from '../ui/Badge'
@@ -48,6 +51,7 @@ interface ActivityItem {
 export default function Dashboard(): JSX.Element {
   const { setView } = useAppStore()
   const { github, providers, workspaceDir } = useSettingsStore()
+  const { isSmall } = useWindowSize()
 
   const statCards: StatCard[] = [
     { label: 'Repositories', value: github.isConnected ? '3' : '—', icon: GitBranch, color: 'var(--color-accent)' },
@@ -76,25 +80,35 @@ export default function Dashboard(): JSX.Element {
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Quick Stats — responsive grid: 1-col on sm, 2-col on md, 4-col on lg+ */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {statCards.map((stat) => (
           <AnimatedItem key={stat.label}>
-            <Card variant="default" padding="lg">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wider">
-                    {stat.label}
-                  </span>
-                  <span className="text-2xl font-bold text-[var(--color-text-primary)] mt-1">
-                    {stat.value}
-                  </span>
+            <motion.div
+              whileHover={{ scale: 1.02, y: -2 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            >
+              <Card variant="default" padding="lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wider">
+                      {stat.label}
+                    </span>
+                    <span className="text-2xl font-bold text-[var(--color-text-primary)] mt-1">
+                      {stat.value}
+                    </span>
+                  </div>
+                  <motion.div
+                    className="p-3 rounded-lg"
+                    style={{ backgroundColor: `${stat.color}15` }}
+                    whileHover={{ rotate: -10, scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  >
+                    <stat.icon size={20} />
+                  </motion.div>
                 </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: `${stat.color}15` }}>
-                  <stat.icon size={20} />
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </motion.div>
           </AnimatedItem>
         ))}
       </div>
@@ -227,37 +241,61 @@ export default function Dashboard(): JSX.Element {
                 System Status
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[var(--color-info-bg)]">
+                <motion.div
+                  className="flex items-center gap-3"
+                  whileHover={{ x: 3 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                  <motion.div
+                    className="p-2 rounded-lg bg-[var(--color-info-bg)]"
+                    whileHover={{ rotate: -10, scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  >
                     <Cpu size={16} className="text-[var(--color-info)]" />
-                  </div>
+                  </motion.div>
                   <div>
                     <p className="text-xs text-[var(--color-text-secondary)]">Providers</p>
                     <p className="text-sm font-medium text-[var(--color-text-primary)]">
                       {providers.filter((p) => p.enabled).length || 0} active
                     </p>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[var(--color-accent-subtle)]">
+                </motion.div>
+                <motion.div
+                  className="flex items-center gap-3"
+                  whileHover={{ x: 3 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                  <motion.div
+                    className="p-2 rounded-lg bg-[var(--color-accent-subtle)]"
+                    whileHover={{ rotate: -10, scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  >
                     <FolderOpen size={16} className="text-[var(--color-accent)]" />
-                  </div>
+                  </motion.div>
                   <div>
                     <p className="text-xs text-[var(--color-text-secondary)]">Workspace</p>
                     <p className="text-sm font-medium text-[var(--color-text-primary)] truncate">
                       {workspaceDir || 'Not set'}
                     </p>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[var(--color-success-bg)]">
+                </motion.div>
+                <motion.div
+                  className="flex items-center gap-3"
+                  whileHover={{ x: 3 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                  <motion.div
+                    className="p-2 rounded-lg bg-[var(--color-success-bg)]"
+                    whileHover={{ rotate: -10, scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  >
                     <Database size={16} className="text-[var(--color-success)]" />
-                  </div>
+                  </motion.div>
                   <div>
                     <p className="text-xs text-[var(--color-text-secondary)]">Memory</p>
                     <p className="text-sm font-medium text-[var(--color-text-primary)]">~256 MB</p>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </Card>
           </AnimatedItem>

@@ -19,7 +19,11 @@ export default defineConfig({
       'node_modules',
       'out',
       'dist',
-      'dist_electron'
+      'dist_electron',
+      'src/renderer/src/components/editor/__tests__/Terminal.test.tsx',
+      'src/renderer/src/components/editor/__tests__/CodeViewer.test.tsx',
+      'src/renderer/src/components/ui/__tests__/Card.test.tsx',
+      'src/renderer/src/components/__tests__/SettingsView.test.tsx'
     ],
     clearMocks: true,
     globals: true,

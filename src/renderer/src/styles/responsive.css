@@ -1,0 +1,147 @@
+/* ========================================================================
+   Responsive Layout Utilities
+   Uses Tailwind CSS responsive breakpoints as CSS media queries.
+   ======================================================================== */
+
+/* ── Hide on specific breakpoints ── */
+
+@media (max-width: 639px) {
+  .hide-sm {
+    display: none !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .hide-md {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hide-lg {
+    display: none !important;
+  }
+}
+
+/* ── Show only on specific breakpoints ── */
+
+.show-sm {
+  display: none !important;
+}
+
+@media (max-width: 639px) {
+  .show-sm {
+    display: revert !important;
+  }
+}
+
+.show-md {
+  display: none !important;
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .show-md {
+    display: revert !important;
+  }
+}
+
+.show-lg {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .show-lg {
+    display: revert !important;
+  }
+}
+
+/* ── Stack vertically on small screens ── */
+
+.stack-sm {
+  display: flex;
+  flex-direction: row;
+}
+
+@media (max-width: 639px) {
+  .stack-sm {
+    flex-direction: column;
+  }
+}
+
+/* ── Sidebar overlay for mobile ── */
+
+@media (max-width: 767px) {
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+  }
+}
+
+@media (min-width: 768px) {
+  .sidebar-overlay {
+    display: none;
+  }
+}
+
+/* ── Constrain max-width on large screens ── */
+
+.content-constrain {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 767px) {
+  .content-constrain {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* ── Responsive gaps ── */
+
+.gap-responsive {
+  gap: 1.5rem;
+}
+
+@media (max-width: 767px) {
+  .gap-responsive {
+    gap: 1rem;
+  }
+}
+
+/* ── Responsive padding for main content ── */
+
+.pane-padding {
+  padding: 1.5rem;
+}
+
+@media (max-width: 767px) {
+  .pane-padding {
+    padding: 0.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .pane-padding {
+    padding: 1rem;
+  }
+}
+
+/* ── Full-width on small, constrained on large ── */
+
+.full-width-sm {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .full-width-sm {
+    width: auto;
+  }
+}

@@ -136,7 +136,7 @@ describe('executionStore', () => {
       const id = useExecutionStore.getState().enqueue({
         title: 'Cancel me',
         priority: 'medium'
-      })
+      }) as string
 
       useExecutionStore.getState().cancel(id)
       const state = useExecutionStore.getState()

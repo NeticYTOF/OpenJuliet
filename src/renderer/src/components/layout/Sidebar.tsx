@@ -10,10 +10,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Code,
-  HelpCircle
+  HelpCircle,
+  GripVertical
 } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
+import { useWindowSize } from '../../hooks/useWindowSize'
 import { cn } from '../../lib/utils'
 import { NAV_ITEMS } from '../../lib/constants'
 import type { ActiveView } from '../../types'
@@ -44,21 +46,39 @@ function getNavIcon(id: string): React.ComponentType<{ className?: string; size?
 export default function Sidebar(): JSX.Element {
   const { activeView, setView, sidebarOpen, toggleSidebar, quickStartOpen, setQuickStartOpen, toggleQuickStart } = useAppStore()
   const { github } = useSettingsStore()
+  const { isSmall } = useWindowSize()
+
+  // Auto-collapse on small screens
+  const effectiveOpen = isSmall ? false : sidebarOpen
 
   return (
     <motion.aside
-      animate={{ width: sidebarOpen ? 240 : 56 }}
+      animate={{ width: effectiveOpen ? 240 : 56 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="relative flex flex-col h-full glass border-r border-[var(--color-border)] overflow-hidden"
+      className={cn(
+        "relative flex flex-col h-full glass border-r border-[var(--color-border)] overflow-hidden shrink-0",
+        isSmall && "sidebar-overlay"
+      )}
     >
-      {/* Toggle Button */}
-      <button
-        onClick={toggleSidebar}
-        className="absolute -right-3 top-16 z-20 flex items-center justify-center w-6 h-6 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-accent)] transition-colors"
-        aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-      >
-        {sidebarOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
-      </button>
+      {/* Toggle Button — only shown on medium+ screens */}
+      {!isSmall && (
+        <button
+          onClick={toggleSidebar}
+          className="absolute -right-3 top-16 z-20 flex items-center justify-center w-6 h-6 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-accent)] transition-colors"
+          aria-label={effectiveOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+        >
+          {effectiveOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
+        </button>
+      )}
+
+      {/* Resizable handle hint on large screens */}
+      {!isSmall && effectiveOpen && (
+        <div className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize group z-10">
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-full bg-[var(--color-border)] opacity-0 group-hover:opacity-100 transition-opacity">
+            <GripVertical size={8} className="text-[var(--color-text-muted)] absolute -left-1.5 top-1/2 -translate-y-1/2" />
+          </div>
+        </div>
+      )}
 
       {/* Navigation Items */}
       <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
@@ -70,7 +90,7 @@ export default function Sidebar(): JSX.Element {
             <motion.button
               key={item.id}
               onClick={() => setView(item.id as ActiveView)}
-              whileHover={{ x: 2 }}
+              whileHover={{ x: 2, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={cn(
                 'group relative flex items-center w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
@@ -78,7 +98,7 @@ export default function Sidebar(): JSX.Element {
                   ? 'bg-[var(--color-accent-subtle)] text-[var(--color-accent)]'
                   : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)]'
               )}
-              title={!sidebarOpen ? item.label : undefined}
+              title={!effectiveOpen ? item.label : undefined}
             >
               {/* Active Indicator */}
               {isActive && (
@@ -98,7 +118,7 @@ export default function Sidebar(): JSX.Element {
               />
 
               {/* Label — only visible when sidebar is open */}
-              {sidebarOpen && (
+              {effectiveOpen && (
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -110,7 +130,7 @@ export default function Sidebar(): JSX.Element {
               )}
 
               {/* Shortcut badge */}
-              {sidebarOpen && item.shortcut && (
+              {effectiveOpen && item.shortcut && (
                 <span className="ml-auto text-[10px] font-medium text-[var(--color-text-muted)] bg-[var(--color-bg-tertiary)] px-1.5 py-0.5 rounded">
                   {item.shortcut}
                 </span>

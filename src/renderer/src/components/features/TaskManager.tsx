@@ -120,8 +120,8 @@ export default function TaskManager(): JSX.Element {
       {filtered.length === 0 ? (
         <EmptyState
           icon={<ListChecks size={40} />}
-          title="No tasks found"
-          description={search ? 'Try a different search term.' : 'Queue a task to get started.'}
+          title="No tasks yet"
+          description={search ? 'Try a different search term.' : 'No tasks yet — create one to get started.'}
           action={!search ? <Button variant="primary" size="sm" icon={<Play size={14} />}>New Task</Button> : undefined}
         />
       ) : (

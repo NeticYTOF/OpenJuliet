@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useAppStore } from '../../stores/appStore'
 import { useSettingsStore } from '../../stores/settingsStore'
+import { useWindowSize } from '../../hooks/useWindowSize'
 import { StatusDot } from '../ui/StatusDot'
 import { UpdateChecker } from '../features/UpdateChecker'
 
@@ -10,6 +11,7 @@ import { UpdateChecker } from '../features/UpdateChecker'
 export default function StatusBar(): JSX.Element {
   const { activeView } = useAppStore()
   const { github, workspaceDir } = useSettingsStore()
+  const { isSmall } = useWindowSize()
 
   return (
     <motion.footer
@@ -20,10 +22,10 @@ export default function StatusBar(): JSX.Element {
       {/* Left */}
       <div className="flex items-center gap-4">
         <span className="capitalize">{activeView || 'dashboard'}</span>
-        {workspaceDir && (
+        {workspaceDir && !isSmall && (
           <span className="flex items-center gap-1">
             <span className="w-1 h-1 rounded-full bg-[var(--color-accent)]" />
-            <span className="truncate max-w-[180px]">{workspaceDir}</span>
+            <span className="truncate max-w-[120px]">{workspaceDir}</span>
           </span>
         )}
       </div>
@@ -32,7 +34,7 @@ export default function StatusBar(): JSX.Element {
       <div className="flex items-center gap-4">
         <span className="flex items-center gap-1.5">
           <StatusDot status={github.isConnected ? 'connected' : 'disconnected'} size={6} />
-          {github.isConnected ? 'GitHub' : 'Offline'}
+          {isSmall ? '' : (github.isConnected ? 'GitHub' : 'Offline')}
         </span>
         <UpdateChecker compact />
       </div>

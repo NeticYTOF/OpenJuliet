@@ -17,6 +17,7 @@ import { useSettingsStore } from '../../stores/settingsStore'
 import { useGitHubStore } from '../../stores/githubStore'
 import { useAppStore } from '../../stores/appStore'
 import { formatRelativeTime } from '../../lib/utils'
+import { useWindowSize } from '../../hooks/useWindowSize'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
@@ -40,6 +41,7 @@ export default function GitHubPanel(): JSX.Element {
     searchQuery, setSearchQuery,
     issueFilter, setIssueFilter
   } = useGitHubStore()
+  const { isSmall } = useWindowSize()
 
   return (
     <AnimatedContainer animation="slideUp">
@@ -49,7 +51,7 @@ export default function GitHubPanel(): JSX.Element {
             {activeView === 'repositories' ? 'Repositories' : activeView === 'issues' ? 'Issues' : 'Pull Requests'}
           </h1>
           <p className="text-sm text-[var(--color-text-secondary)] mt-1">
-            {github.isConnected ? `Connected as @${github.username || 'user'}` : 'Connect your GitHub account'}
+            {github.isConnected ? `Connected as @${github.username || 'user'}` : 'Connect GitHub to get started'}
           </p>
         </div>
       </div>
@@ -58,29 +60,29 @@ export default function GitHubPanel(): JSX.Element {
         <GitHubLogin onConnect={(token) => setGitHubAuth({ token, isConnected: true, method: 'pat', username: 'user' })} />
       ) : (
         <Tabs.Root defaultValue={activeView === 'issues' ? 'issues' : activeView === 'repositories' ? 'repos' : 'prs'}>
-          <Tabs.List className="flex gap-1 mb-6 p-1 bg-[var(--color-bg-tertiary)] rounded-lg w-fit">
+          <Tabs.List className={cn("flex gap-1 mb-6 p-1 bg-[var(--color-bg-tertiary)] rounded-lg", isSmall ? "overflow-x-auto w-full" : "w-fit")}>
             <Tabs.Trigger value="repos" className={tabTriggerStyles}>
               <GitBranch size={14} />
-              Repositories
+              {!isSmall && 'Repositories'}
             </Tabs.Trigger>
             <Tabs.Trigger value="issues" className={tabTriggerStyles}>
               <Bug size={14} />
-              Issues
+              {!isSmall && 'Issues'}
             </Tabs.Trigger>
             <Tabs.Trigger value="prs" className={tabTriggerStyles}>
               <GitPullRequest size={14} />
-              Pull Requests
+              {!isSmall && 'Pull Requests'}
             </Tabs.Trigger>
           </Tabs.List>
 
           <Tabs.Content value="repos">
-            <GitHubRepos repos={repos} loading={reposLoading} error={reposError} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+            <GitHubRepos repos={repos} loading={reposLoading} error={reposError} searchQuery={searchQuery} onSearchChange={setSearchQuery} isSmall={isSmall} />
           </Tabs.Content>
           <Tabs.Content value="issues">
-            <GitHubIssues issues={issues} loading={issuesLoading} error={issuesError} filter={issueFilter} onFilterChange={setIssueFilter} />
+            <GitHubIssues issues={issues} loading={issuesLoading} error={issuesError} filter={issueFilter} onFilterChange={setIssueFilter} isSmall={isSmall} />
           </Tabs.Content>
           <Tabs.Content value="prs">
-            <GitHubPRs prs={prs} loading={prsLoading} error={prsError} />
+            <GitHubPRs prs={prs} loading={prsLoading} error={prsError} isSmall={isSmall} />
           </Tabs.Content>
         </Tabs.Root>
       )}
@@ -157,12 +159,13 @@ function GitHubLogin({ onConnect }: { onConnect: (token: string) => void }): JSX
 
 // ─── Repos Browser ───
 
-function GitHubRepos({ repos, loading, error, searchQuery, onSearchChange }: {
+function GitHubRepos({ repos, loading, error, searchQuery, onSearchChange, isSmall }: {
   repos: Repository[]
   loading: boolean
   error: string | null
   searchQuery: string
   onSearchChange: (q: string) => void
+  isSmall?: boolean
 }): JSX.Element {
   const filtered = repos.filter((r) =>
     r.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -200,7 +203,11 @@ function GitHubRepos({ repos, loading, error, searchQuery, onSearchChange }: {
               key={repo.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-4 rounded-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] hover:border-[var(--color-accent)]/30 transition-colors cursor-pointer"
+              className={cn(
+                isSmall
+                  ? "p-4 rounded-xl bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] shadow-sm"
+                  : "p-4 rounded-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] hover:border-[var(--color-accent)]/30 transition-colors cursor-pointer"
+              )}
             >
               <div className="flex items-center gap-2 mb-1">
                 <GitBranch size={14} className="text-[var(--color-text-muted)]" />
@@ -208,7 +215,7 @@ function GitHubRepos({ repos, loading, error, searchQuery, onSearchChange }: {
                 {repo.private && <Badge variant="default" size="sm">Private</Badge>}
               </div>
               {repo.description && <p className="text-xs text-[var(--color-text-secondary)] mb-2 line-clamp-2">{repo.description}</p>}
-              <div className="flex items-center gap-3 text-xs text-[var(--color-text-muted)]">
+              <div className={cn("flex items-center gap-3 text-xs text-[var(--color-text-muted)]", isSmall && "flex-wrap")}>
                 {repo.language && <span>{repo.language}</span>}
                 <span className="flex items-center gap-1"><Star size={12} />{repo.stars}</span>
                 <span>Updated {formatRelativeTime(repo.updatedAt)}</span>
@@ -223,12 +230,13 @@ function GitHubRepos({ repos, loading, error, searchQuery, onSearchChange }: {
 
 // ─── Issues Browser ───
 
-function GitHubIssues({ issues, loading, error, filter, onFilterChange }: {
+function GitHubIssues({ issues, loading, error, filter, onFilterChange, isSmall }: {
   issues: Issue[]
   loading: boolean
   error: string | null
   filter: string
   onFilterChange: (f: 'all' | 'open' | 'closed') => void
+  isSmall?: boolean
 }): JSX.Element {
   const filtered = filter === 'all' ? issues : issues.filter((i) => i.state === filter)
 
@@ -261,9 +269,12 @@ function GitHubIssues({ issues, loading, error, filter, onFilterChange }: {
         />
       )}
       {!loading && !error && filtered.length > 0 && (
-        <div className="space-y-2">
+        <div className={cn("space-y-2", isSmall && "space-y-3")}>
           {filtered.map((issue) => (
-            <div key={issue.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-[var(--color-bg-tertiary)] transition-colors cursor-pointer">
+            <div key={issue.id} className={cn(
+              "flex items-start gap-3 p-3 rounded-lg hover:bg-[var(--color-bg-tertiary)] transition-colors cursor-pointer",
+              isSmall && "p-4 rounded-xl bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] shadow-sm"
+            )}>
               <div className={cn('w-3 h-3 rounded-full mt-1 shrink-0', issue.state === 'open' ? 'bg-[var(--color-success)]' : 'bg-[var(--color-text-muted)]')} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--color-text-primary)]">{issue.title}</p>
@@ -284,10 +295,11 @@ function GitHubIssues({ issues, loading, error, filter, onFilterChange }: {
 
 // ─── PRs Browser ───
 
-function GitHubPRs({ prs, loading, error }: {
+function GitHubPRs({ prs, loading, error, isSmall }: {
   prs: PullRequest[]
   loading: boolean
   error: string | null
+  isSmall?: boolean
 }): JSX.Element {
   return (
     <div>
@@ -301,9 +313,12 @@ function GitHubPRs({ prs, loading, error }: {
         />
       )}
       {!loading && !error && prs.length > 0 && (
-        <div className="space-y-2">
+        <div className={cn("space-y-2", isSmall && "space-y-3")}>
           {prs.map((pr) => (
-            <div key={pr.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-[var(--color-bg-tertiary)] transition-colors cursor-pointer">
+            <div key={pr.id} className={cn(
+              "flex items-start gap-3 p-3 rounded-lg hover:bg-[var(--color-bg-tertiary)] transition-colors cursor-pointer",
+              isSmall && "p-4 rounded-xl bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] shadow-sm"
+            )}>
               <GitPullRequest size={16} className={cn(
                 'mt-0.5',
                 pr.state === 'open' ? 'text-[var(--color-success)]' : pr.state === 'merged' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'

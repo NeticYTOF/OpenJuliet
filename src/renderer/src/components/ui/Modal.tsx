@@ -46,24 +46,34 @@ const sizeStyles: Record<ModalSize, string> = {
 /* ──── Animation variants ──── */
 
 const overlayVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.2 } },
-  exit: { opacity: 0, transition: { duration: 0.15 } }
+  hidden: { opacity: 0, backdropFilter: 'blur(0px)', WebkitBackdropFilter: 'blur(0px)' },
+  visible: {
+    opacity: 1,
+    backdropFilter: 'blur(6px)',
+    WebkitBackdropFilter: 'blur(6px)',
+    transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] }
+  },
+  exit: {
+    opacity: 0,
+    backdropFilter: 'blur(0px)',
+    WebkitBackdropFilter: 'blur(0px)',
+    transition: { duration: 0.2, ease: [0.65, 0, 0.35, 1] }
+  }
 }
 
 const modalVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.95, y: 12 },
+  hidden: { opacity: 0, scale: 0.95, y: 16 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
   },
   exit: {
     opacity: 0,
     scale: 0.96,
-    y: 8,
-    transition: { duration: 0.15, ease: 'easeIn' }
+    y: 10,
+    transition: { duration: 0.18, ease: [0.65, 0, 0.35, 1] }
   }
 }
 

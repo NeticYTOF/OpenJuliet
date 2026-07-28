@@ -1,9 +1,10 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect, Suspense } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, FileCode, ChevronDown, ChevronRight } from 'lucide-react'
 import { cn } from '../../lib/utils'
+import { LazyMonacoEditor } from './LazyMonacoEditor'
 
 /* ──── Types ──── */
 
@@ -395,37 +396,60 @@ export function CodeViewer({
         >
           {/* Read-only view with syntax highlighting */}
           {readOnly ? (
-            <div className="p-4">
-              <SyntaxHighlighter
-                language={normLang}
-                style={theme}
-                showLineNumbers={lineNumbers}
-                wrapLines
-                customStyle={{
-                  background: 'transparent',
-                  padding: 0,
-                  margin: 0,
-                }}
-                lineNumberStyle={{
-                  minWidth: '3em',
-                  paddingRight: '1em',
-                  color: 'var(--color-text-muted)',
-                  userSelect: 'none',
-                  textAlign: 'right',
-                  borderRight: '1px solid var(--color-border)',
-                  marginRight: '1em',
-                  fontSize: '12px',
-                }}
-                lineProps={{
-                  style: {
-                    wordBreak: 'break-all',
-                    whiteSpace: 'pre-wrap',
-                  },
-                }}
-              >
-                {search.query ? highlightedCode : code}
-              </SyntaxHighlighter>
-            </div>
+            <Suspense
+              fallback={
+                <div className="p-4">
+                  <SyntaxHighlighter
+                    language={normLang}
+                    style={theme}
+                    showLineNumbers={lineNumbers}
+                    wrapLines
+                    customStyle={{
+                      background: 'transparent',
+                      padding: 0,
+                      margin: 0,
+                    }}
+                    lineNumberStyle={{
+                      minWidth: '3em',
+                      paddingRight: '1em',
+                      color: 'var(--color-text-muted)',
+                      userSelect: 'none',
+                      textAlign: 'right',
+                      borderRight: '1px solid var(--color-border)',
+                      marginRight: '1em',
+                      fontSize: '12px',
+                    }}
+                    lineProps={{
+                      style: {
+                        wordBreak: 'break-all',
+                        whiteSpace: 'pre-wrap',
+                      },
+                    }}
+                  >
+                    {search.query ? highlightedCode : code}
+                  </SyntaxHighlighter>
+                </div>
+              }
+            >
+              <div className="h-full min-h-[300px]">
+                <LazyMonacoEditor
+                  language={normLang}
+                  value={code}
+                  theme="vs-dark"
+                  options={{
+                    readOnly: true,
+                    minimap: { enabled: showMinimap },
+                    lineNumbers: lineNumbers ? 'on' : 'off',
+                    fontSize: 13,
+                    fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
+                    scrollBeyondLastLine: false,
+                    padding: { top: 16, bottom: 16 },
+                    renderLineHighlight: 'line',
+                    automaticLayout: true,
+                  }}
+                />
+              </div>
+            </Suspense>
           ) : (
             /* Editable mode — textarea overlaid on syntax-highlighted pre */
             <div className="relative p-4">

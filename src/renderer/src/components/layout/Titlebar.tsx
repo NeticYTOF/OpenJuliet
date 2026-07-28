@@ -1,9 +1,11 @@
-import { Minus, Square, X, Sparkles, Bell } from 'lucide-react'
+import { Minus, Square, X, Sparkles } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
+import { useWindowSize } from '../../hooks/useWindowSize'
 import { APP_NAME } from '../../lib/constants'
 import { NotificationCenter } from '../features/NotificationCenter'
 import ThemeToggle from '../features/ThemeToggle'
 import type { AppNotification } from '../features/NotificationCenter'
+import { cn } from '../../lib/utils'
 
 /**
  * Custom frameless titlebar for the Electron window.
@@ -19,6 +21,7 @@ export default function Titlebar(): JSX.Element {
     clearAllPanelNotifications,
     addPanelNotification
   } = useAppStore()
+  const { isSmall } = useWindowSize()
 
   // Map panel notifications to the AppNotification type expected by NotificationCenter
   const notificationItems: AppNotification[] = panelNotifications
@@ -54,52 +57,56 @@ export default function Titlebar(): JSX.Element {
       {/* Left — App Branding */}
       <div className="flex items-center gap-2 no-drag min-w-0" style={{ ['WebkitAppRegion' as string]: 'no-drag' as unknown as string }}>
         <Sparkles size={16} className="text-[var(--color-accent)] shrink-0" />
-        <span className="text-sm font-semibold text-[var(--color-text-primary)] truncate">
-          {APP_NAME}
+        <span className={cn("font-semibold text-[var(--color-text-primary)] truncate", isSmall ? "text-xs" : "text-sm")}>
+          {isSmall ? 'OJ' : APP_NAME}
         </span>
       </div>
 
-      {/* Center — Current View */}
-      <div className="absolute left-1/2 -translate-x-1/2 no-drag" style={{ ['WebkitAppRegion' as string]: 'no-drag' as unknown as string }}>
-        <span className="text-xs font-medium text-[var(--color-text-muted)]">
-          {viewNames[activeView] || 'Dashboard'}
-        </span>
-      </div>
+      {/* Center — Current View (hidden on small screens) */}
+      {!isSmall && (
+        <div className="absolute left-1/2 -translate-x-1/2 no-drag" style={{ ['WebkitAppRegion' as string]: 'no-drag' as unknown as string }}>
+          <span className="text-xs font-medium text-[var(--color-text-muted)]">
+            {viewNames[activeView] || 'Dashboard'}
+          </span>
+        </div>
+      )}
 
       {/* Right — Notifications, Theme, Window Controls */}
       <div className="flex items-center no-drag gap-1" style={{ ['WebkitAppRegion' as string]: 'no-drag' as unknown as string }}>
         {/* Notification Center */}
-        <NotificationCenter
-          notifications={notificationItems}
-          onMarkRead={markPanelNotificationRead}
-          onMarkAllRead={handleMarkAllRead}
-          onClear={clearPanelNotification}
-          onClearAll={handleClearAll}
-          onNotificationAction={handleAction}
-        />
+        {!isSmall && (
+          <NotificationCenter
+            notifications={notificationItems}
+            onMarkRead={markPanelNotificationRead}
+            onMarkAllRead={handleMarkAllRead}
+            onClear={clearPanelNotification}
+            onClearAll={handleClearAll}
+            onNotificationAction={handleAction}
+          />
+        )}
 
         {/* Theme Toggle */}
         <ThemeToggle />
 
         {/* Window Controls */}
-        <div className="flex items-center ml-1">
+        <div className="flex items-center">
         <button
           onClick={handleMinimize}
-          className="flex items-center justify-center w-10 h-7 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors rounded"
+          className="flex items-center justify-center w-8 h-7 md:w-10 md:h-7 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors rounded"
           aria-label="Minimize"
         >
           <Minus size={14} />
         </button>
         <button
           onClick={handleMaximize}
-          className="flex items-center justify-center w-10 h-7 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors rounded"
+          className="flex items-center justify-center w-8 h-7 md:w-10 md:h-7 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors rounded"
           aria-label="Maximize"
         >
           <Square size={12} />
         </button>
         <button
           onClick={handleClose}
-          className="flex items-center justify-center w-10 h-7 text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-error)] transition-colors rounded ml-1"
+          className="flex items-center justify-center w-8 h-7 md:w-10 md:h-7 text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-error)] transition-colors rounded ml-1"
           aria-label="Close"
         >
           <X size={14} />

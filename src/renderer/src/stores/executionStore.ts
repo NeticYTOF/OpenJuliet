@@ -3,12 +3,34 @@ import type { Task, ExecutionProgress, LogEntry } from '../types'
 import { generateId } from '../lib/utils'
 
 /**
+ * Maximum number of tasks allowed in the queue at once.
+ */
+const MAX_QUEUE_SIZE = 50
+
+/**
+ * Default execution timeout in milliseconds (30 minutes).
+ */
+const DEFAULT_TIMEOUT_MS = 30 * 60 * 1000
+
+/**
+ * Check interval for task timeout watcher in milliseconds.
+ */
+const TIMEOUT_CHECK_INTERVAL = 10_000
+
+/**
  * Execution store — manages task queue, active task, and execution history.
  *
  * Listens to IPC events from the main process for real-time progress tracking:
  *   - execution:progress  => updates active task progress + step
  *   - execution:log       => appends log entries
  *   - execution:complete  => moves active task to history, updates elapsed time
+ *
+ * Edge case handling:
+ *   - Cancel non-existent task → silent no-op
+ *   - Pause already-paused task → silent no-op
+ *   - Resume non-paused task → silent no-op
+ *   - Queue full → warn and reject
+ *   - Task timeout → auto-cancel with error
  */
 
 // ---------------------------------------------------------------------------
@@ -25,7 +47,7 @@ interface ExecutionState {
   logs: LogEntry[]
 
   /* ──── Actions ──── */
-  enqueue: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => string
+  enqueue: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => string | null
   cancel: (taskId: string) => void
   pause: (taskId: string) => void
   resume: (taskId: string) => void
@@ -36,6 +58,8 @@ interface ExecutionState {
   reorderQueue: (fromIndex: number, toIndex: number) => void
   clearHistory: () => void
   reset: () => void
+  /** Initialize timeout watcher that auto-cancels tasks exceeding their timeout */
+  initTimeoutWatcher: (timeoutMs?: number) => () => void
 
   /** Create a synthetic active task for the demo workflow.
    *  Sets up the store state so that IPC progress/log/complete events
@@ -76,6 +100,16 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
   /* ──── Standard Actions ──── */
 
   enqueue: (taskData) => {
+    const { queue } = get()
+
+    // Queue full → warn and reject
+    if (queue.length >= MAX_QUEUE_SIZE) {
+      console.warn(
+        `[executionStore] Queue full (${MAX_QUEUE_SIZE} tasks). Task "${taskData.title}" rejected.`
+      )
+      return null
+    }
+
     const id = generateId()
     const now = Date.now()
     const task: Task = {
@@ -107,6 +141,13 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
 
   cancel: (taskId) =>
     set((state) => {
+      // Silent no-op: task doesn't exist
+      const taskInQueue = state.queue.find((t) => t.id === taskId)
+      const isActive = state.activeTask?.id === taskId
+      if (!taskInQueue && !isActive) {
+        return state
+      }
+
       const updatedQueue = state.queue.map((t) =>
         t.id === taskId
           ? { ...t, status: 'cancelled' as const, updatedAt: Date.now() }
@@ -116,14 +157,13 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
         state.activeTask?.id === taskId
           ? { ...state.activeTask, status: 'cancelled' as const, updatedAt: Date.now() }
           : state.activeTask
-      const cancelledTask =
-        state.queue.find((t) => t.id === taskId) || state.activeTask?.id === taskId
-          ? {
-              ...(state.queue.find((t) => t.id === taskId) || state.activeTask!),
-              status: 'cancelled' as const,
-              updatedAt: Date.now()
-            }
-          : null
+      const cancelledTask = taskInQueue || isActive
+        ? {
+            ...(taskInQueue || state.activeTask!),
+            status: 'cancelled' as const,
+            updatedAt: Date.now()
+          }
+        : null
 
       // Notify main process via IPC
       const api = typeof window !== 'undefined' ? (window as any).api : null
@@ -141,6 +181,16 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
 
   pause: (taskId) =>
     set((state) => {
+      // Silent no-op: already paused or task doesn't exist
+      const taskInQueue = state.queue.find((t) => t.id === taskId)
+      const isActive = state.activeTask?.id === taskId
+      if (!taskInQueue && !isActive) {
+        return state
+      }
+      if (taskInQueue?.status === 'paused' || state.activeTask?.status === 'paused') {
+        return state
+      }
+
       if (state.activeTask?.id === taskId) {
         return {
           activeTask: {
@@ -162,6 +212,16 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
 
   resume: (taskId) =>
     set((state) => {
+      // Silent no-op: task doesn't exist or isn't paused
+      const taskInQueue = state.queue.find((t) => t.id === taskId)
+      const isActive = state.activeTask?.id === taskId
+      if (!taskInQueue && !isActive) {
+        return state
+      }
+      if (state.activeTask?.status !== 'paused' && taskInQueue?.status !== 'paused') {
+        return state
+      }
+
       if (state.activeTask?.id === taskId) {
         return {
           activeTask: {
@@ -212,6 +272,50 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
   clearHistory: () => set({ history: [] }),
 
   reset: () => set(initialState),
+
+  /**
+   * initTimeoutWatcher — Starts an interval that monitors the active task
+   * for timeout. If the task runs longer than timeoutMs, it is automatically
+   * cancelled with an error.
+   *
+   * @returns An unsubscribe function to stop the watcher.
+   */
+  initTimeoutWatcher: (timeoutMs = DEFAULT_TIMEOUT_MS) => {
+    const intervalId = setInterval(() => {
+      const state = get()
+
+      if (!state.activeTask || state.activeTask.status !== 'running') {
+        return // No active running task to watch
+      }
+
+      const elapsed = Date.now() - state.activeTask.createdAt
+      if (elapsed > timeoutMs) {
+        const taskId = state.activeTask.id
+        console.warn(
+          `[executionStore] Task "${state.activeTask.title}" timed out after ${Math.floor(elapsed / 1000)}s`
+        )
+
+        // Auto-cancel with error
+        const timedOutTask: Task = {
+          ...state.activeTask,
+          status: 'failed',
+          error: `Task timed out after ${Math.floor(timeoutMs / 60000)} minutes`,
+          updatedAt: Date.now()
+        }
+
+        set({
+          activeTask: null,
+          isRunning: false,
+          progress: null,
+          history: [...state.history, timedOutTask]
+        })
+      }
+    }, TIMEOUT_CHECK_INTERVAL)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  },
 
   /**
    * startDemo — Sets up a synthetic active task for the demo workflow.

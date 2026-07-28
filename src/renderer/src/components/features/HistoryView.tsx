@@ -1,10 +1,13 @@
-import { useMemo } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import { Activity, Terminal } from 'lucide-react'
 import { Tabs } from '../ui/Tabs'
 import { ActivityFeed } from './ActivityFeed'
-import ExecutionPanel from './ExecutionPanel'
+import { LazyLoader } from '../ui/LazyLoader'
 import { useExecutionStore } from '../../stores/executionStore'
 import type { ActivityEntry, ActivitySeverity } from './ActivityFeed'
+
+/* Lazy-load ExecutionPanel (large, not always visible) */
+const ExecutionPanel = lazy(() => import('./ExecutionPanel'))
 
 /**
  * HistoryView — Tabbed view combining ExecutionPanel (task history) and ActivityFeed.
@@ -98,7 +101,9 @@ export default function HistoryView(): JSX.Element {
     <Tabs tabs={tabs} defaultValue="execution" size="sm">
       {/* Tab 1: Execution Panel */}
       <div className="pt-4">
-        <ExecutionPanel />
+        <Suspense fallback={<LazyLoader type="list" />}>
+          <ExecutionPanel />
+        </Suspense>
       </div>
 
       {/* Tab 2: Activity Feed */}

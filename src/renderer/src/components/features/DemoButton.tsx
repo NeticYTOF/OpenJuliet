@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { Play, Loader2, Sparkles } from 'lucide-react'
 import { useAppStore } from '../../stores/appStore'
 import { useExecutionStore } from '../../stores/executionStore'
@@ -111,13 +112,15 @@ export default function DemoButton(): JSX.Element {
           {/* Feature highlights */}
           <div className="flex flex-wrap gap-3 mt-3">
             {['Live progress', 'Stage timeline', 'Log output'].map((feature) => (
-              <span
+              <motion.span
                 key={feature}
-                className="inline-flex items-center gap-1 text-[10px] font-medium text-[var(--color-text-muted)] bg-[var(--color-bg-tertiary)]/50 px-2 py-0.5 rounded-full"
+                whileHover={{ scale: 1.05, y: -1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                className="inline-flex items-center gap-1 text-[10px] font-medium text-[var(--color-text-muted)] bg-[var(--color-bg-tertiary)]/50 px-2 py-0.5 rounded-full cursor-default"
               >
                 <span className="w-1 h-1 rounded-full bg-[var(--color-accent)]" />
                 {feature}
-              </span>
+              </motion.span>
             ))}
           </div>
 

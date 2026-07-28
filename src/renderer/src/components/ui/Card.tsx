@@ -25,7 +25,7 @@ const variantStyles: Record<CardVariant, string> = {
   default:
     'bg-[rgba(30,30,46,0.6)] backdrop-blur-[12px] border border-[rgba(42,42,62,0.5)] shadow-[var(--shadow-md)]',
   interactive:
-    'bg-[rgba(30,30,46,0.6)] backdrop-blur-[12px] border border-[rgba(42,42,62,0.5)] shadow-[var(--shadow-md)] cursor-pointer hover:border-[rgba(108,92,231,0.3)] hover:shadow-[var(--shadow-glow)] transition-all duration-300',
+    'bg-[rgba(30,30,46,0.6)] backdrop-blur-[12px] border border-[rgba(42,42,62,0.5)] shadow-[var(--shadow-md)] cursor-pointer hover:border-[var(--color-accent)] hover:shadow-[var(--shadow-glow)] hover-glow-border',
   elevated:
     'bg-[rgba(30,30,46,0.8)] backdrop-blur-[20px] border border-[rgba(42,42,62,0.6)] shadow-[var(--shadow-lg)]'
 }
@@ -65,7 +65,7 @@ export function Card({
         variantStyles[variant],
         className
       )}
-      whileHover={variant === 'interactive' ? { y: -2 } : undefined}
+      whileHover={variant === 'interactive' ? { y: -2, scale: 1.01 } : undefined}
       {...props}
     >
       {header && (

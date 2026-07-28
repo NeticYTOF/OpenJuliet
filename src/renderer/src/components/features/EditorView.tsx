@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Code, FileCode, FolderOpen, Plus } from 'lucide-react'
+import { Code, FileCode, FolderOpen, Plus, ChevronDown, ChevronUp } from 'lucide-react'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
+import { useWindowSize } from '../../hooks/useWindowSize'
+import { cn } from '../../lib/utils'
 import { AnimatedContainer, AnimatedItem } from '../ui/AnimatedContainer'
 
 /**
@@ -12,6 +14,8 @@ import { AnimatedContainer, AnimatedItem } from '../ui/AnimatedContainer'
  */
 export default function EditorView(): JSX.Element {
   const [activeTab, setActiveTab] = useState<'files' | 'recent'>('files')
+  const [panelsExpanded, setPanelsExpanded] = useState(true)
+  const { isSmall } = useWindowSize()
 
   return (
     <AnimatedContainer animation="slideUp">
@@ -32,60 +36,74 @@ export default function EditorView(): JSX.Element {
         </div>
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions — collapsible on small screens */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 space-y-4">
-          <AnimatedItem>
-            <Card variant="default" padding="lg">
-              <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">
-                Quick Actions
-              </h3>
-              <div className="space-y-2">
-                <Button
-                  variant="secondary"
-                  size="md"
-                  icon={<FolderOpen size={16} />}
-                  fullWidth
-                >
-                  Open File
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  icon={<Plus size={16} />}
-                  fullWidth
-                >
-                  New File
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  icon={<FolderOpen size={16} />}
-                  fullWidth
-                >
-                  Open Folder
-                </Button>
-              </div>
-            </Card>
-          </AnimatedItem>
+        {/* Sidebar panels — collapse on small screens */}
+        {(isSmall ? panelsExpanded : true) && (
+          <div className="lg:col-span-1 space-y-4">
+            <AnimatedItem>
+              <Card variant="default" padding="lg">
+                <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">
+                  Quick Actions
+                </h3>
+                <div className="space-y-2">
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    icon={<FolderOpen size={16} />}
+                    fullWidth
+                  >
+                    Open File
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    icon={<Plus size={16} />}
+                    fullWidth
+                  >
+                    New File
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    icon={<FolderOpen size={16} />}
+                    fullWidth
+                  >
+                    Open Folder
+                  </Button>
+                </div>
+              </Card>
+            </AnimatedItem>
 
-          <AnimatedItem>
-            <Card variant="default" padding="lg">
-              <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">
-                Recent Files
-              </h3>
-              <div className="text-center py-8">
-                <FileCode size={32} className="mx-auto text-[var(--color-text-muted)] opacity-50 mb-2" />
-                <p className="text-xs text-[var(--color-text-muted)]">
-                  No recent files
-                </p>
-                <p className="text-xs text-[var(--color-text-muted)] mt-1">
-                  Open a file to get started
-                </p>
-              </div>
-            </Card>
-          </AnimatedItem>
-        </div>
+            <AnimatedItem>
+              <Card variant="default" padding="lg">
+                <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">
+                  Recent Files
+                </h3>
+                <div className="text-center py-8">
+                  <FileCode size={32} className="mx-auto text-[var(--color-text-muted)] opacity-50 mb-2" />
+                  <p className="text-xs text-[var(--color-text-muted)]">
+                    No recent files
+                  </p>
+                  <p className="text-xs text-[var(--color-text-muted)] mt-1">
+                    Open a file to get started
+                  </p>
+                </div>
+              </Card>
+            </AnimatedItem>
+          </div>
+        )}
+
+        {/* Toggle panel collapse button on small screens */}
+        {isSmall && (
+          <button
+            onClick={() => setPanelsExpanded(!panelsExpanded)}
+            className="flex items-center justify-center gap-1 p-2 text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] bg-[var(--color-bg-tertiary)] rounded-lg border border-[var(--color-border)] w-full mb-4"
+          >
+            {panelsExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {panelsExpanded ? 'Hide panels' : 'Show panels'}
+          </button>
+        )}
 
         {/* Main Editor Area Preview */}
         <div className="lg:col-span-2">

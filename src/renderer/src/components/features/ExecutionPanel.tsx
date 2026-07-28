@@ -59,8 +59,8 @@ export default function ExecutionPanel(): JSX.Element {
       {!activeTask && !progress ? (
         <EmptyState
           icon={<Terminal size={40} />}
-          title="No active execution"
-          description="Start a task to see live execution details here, or browse the history below."
+          title="No active task"
+          description="No active task — run a demo or select an issue to get started."
         />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

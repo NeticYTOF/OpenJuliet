@@ -63,6 +63,18 @@
   /* Transitions */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Animation durations */
+  --duration-fast: 0.15s;
+  --duration-normal: 0.2s;
+  --duration-slow: 0.3s;
+
+  /* Focus ring */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
 
   /* Titlebar */
   --titlebar-height: 38px;
@@ -109,6 +121,9 @@ body {
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
+  /* Smooth theme transitions */
+  transition: background-color var(--duration-slow) var(--ease-out),
+    color var(--duration-slow) var(--ease-out);
 }
 
 code,
@@ -316,6 +331,62 @@ pre,
   animation: slideInLeft 0.3s var(--ease-out);
 }
 
+/* ── Scroll-triggered animation classes ── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s var(--ease-out),
+    transform 0.6s var(--ease-out);
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.6s var(--ease-out),
+    transform 0.6s var(--ease-out);
+}
+
+.scroll-reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.6s var(--ease-out),
+    transform 0.6s var(--ease-out);
+}
+
+.scroll-reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.6s var(--ease-out),
+    transform 0.6s var(--ease-out);
+}
+
+.scroll-reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Staggered delay helpers (for scroll-reveal children) ── */
+.scroll-delay-1 { transition-delay: 0.05s; }
+.scroll-delay-2 { transition-delay: 0.1s; }
+.scroll-delay-3 { transition-delay: 0.15s; }
+.scroll-delay-4 { transition-delay: 0.2s; }
+.scroll-delay-5 { transition-delay: 0.25s; }
+
 /* ========================================================================
    Utility Classes
    ======================================================================== */
@@ -336,6 +407,60 @@ pre,
 
 .glow-accent {
   box-shadow: 0 0 12px var(--color-accent-glow);
+}
+
+/* ── Interactive hover classes ── */
+.hover-lift {
+  transition: transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.hover-lift-glow:hover {
+  box-shadow: 0 0 16px var(--color-accent-glow);
+}
+
+.hover-scale {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.hover-scale:hover {
+  transform: scale(1.03);
+}
+
+.hover-scale-subtle {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.hover-scale-subtle:hover {
+  transform: scale(1.02);
+}
+
+.hover-glow-border {
+  transition: border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.hover-glow-border:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 16px var(--color-accent-glow);
+}
+
+.hover-rotate-icon {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.hover-rotate-icon:hover {
+  transform: rotate(-10deg) scale(1.1);
+}
+
+/* ── Tap / active classes ── */
+.active-scale:active {
+  transform: scale(0.97);
 }
 
 .text-gradient {
@@ -422,7 +547,7 @@ pre,
 
 /* ── New: card-hover ── */
 .card-hover {
-  transition: all 0.3s var(--ease-out);
+  transition: all var(--duration-slow) var(--ease-out);
 }
 
 .card-hover:hover {
@@ -458,9 +583,12 @@ pre::selection,
    Focus Ring
    ======================================================================== */
 
+/* Global focus-visible — uses accent color with glowing effect */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--color-accent);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-md);
+  transition: outline-color var(--duration-fast) ease-out;
 }
 
 /* Remove default focus for mouse clicks */
@@ -468,17 +596,22 @@ pre::selection,
   outline: none;
 }
 
-/* Enhanced focus ring for interactive elements */
+/* Enhanced focus ring with glow for all interactive elements */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+[tabindex]:focus-visible,
+[role='button']:focus-visible,
+[role='tab']:focus-visible,
+[role='menuitem']:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-accent);
+  outline-offset: var(--focus-ring-offset);
   border-radius: var(--radius-md);
-  transition: outline-color 0.15s ease;
+  box-shadow: 0 0 0 4px var(--color-accent-subtle);
+  transition: outline-color var(--duration-fast) ease-out,
+    box-shadow var(--duration-fast) ease-out;
 }
 
 /* ========================================================================
