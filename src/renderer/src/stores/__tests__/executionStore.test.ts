@@ -147,7 +147,7 @@ describe('executionStore', () => {
       const id = useExecutionStore.getState().enqueue({
         title: 'Running task',
         priority: 'high'
-      })
+      }) as string
 
       // Simulate it becoming active
       useExecutionStore.setState({
@@ -169,7 +169,7 @@ describe('executionStore', () => {
       const id = useExecutionStore.getState().enqueue({
         title: 'History bound',
         priority: 'low'
-      })
+      }) as string
 
       useExecutionStore.getState().cancel(id)
       const state = useExecutionStore.getState()
