@@ -218,7 +218,7 @@ describe('SettingsView', () => {
     render(<SettingsView />)
     fireEvent.click(screen.getByText('Providers'))
 
-    expect(screen.getByText('No providers configured yet. Add one above.')).toBeInTheDocument()
+    expect(screen.getByText('No providers configured yet')).toBeInTheDocument()
   })
 
   it('shows connected state in GitHub tab when connected', () => {

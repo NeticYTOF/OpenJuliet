@@ -44,7 +44,7 @@ describe('Card', () => {
     const { container } = render(<Card variant="interactive">Interactive</Card>)
     const outerDiv = container.firstElementChild as HTMLElement
     expect(outerDiv.className).toContain('cursor-pointer')
-    expect(outerDiv.className).toContain('hover:border-[rgba(108,92,231,0.3)]')
+    expect(container.innerHTML).toContain('hover:border-[var(--color-accent)]')
   })
 
   it('renders with elevated variant', () => {
